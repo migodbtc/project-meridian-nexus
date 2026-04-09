@@ -11,10 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4                   # Checkout code
-      - uses: actions/setup-node@v4                 # Setup Node 22 + Cache
+      - uses: actions/setup-node@v4                 # Setup Node 22 
         with:
           node-version: 22
-          cache: 'pnpm'
       - uses: pnpm/action-setup@v3                  # Setup pnpm 9
         with:
           version: 9
