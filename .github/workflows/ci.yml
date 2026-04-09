@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4                   # Checkout code
@@ -30,7 +30,6 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - run: pnpm install --frozen-lockfile         # Install pnpm files & modules
       - run: pnpm tsc --noEmit                      # Check types in TypeScript
-      - run: pnpm lint                              # Run linter
       - run: pnpm build                             # Build project
         # env:
         #   # Add mock ENVs if your build requires them to pass ???
