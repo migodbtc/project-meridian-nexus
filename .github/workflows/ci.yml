@@ -2,7 +2,7 @@ name: Next.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, ci ]
   pull_request:
     branches: [ main ]
 
@@ -19,8 +19,9 @@ jobs:
           version: 9
       - id: pnpm-cache                              # Get pnpm store directory
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
+          STORE_PATH="$(pnpm store path)" 
+          echo "pnpm store path: $STORE_PATH"
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_OUTPUT
       - uses: actions/cache@v4                      # Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
@@ -31,7 +32,7 @@ jobs:
       - run: pnpm tsc --noEmit                      # Check types in TypeScript
       - run: pnpm lint                              # Run linter
       - run: pnpm build                             # Build project
-        env:
-          # Add mock ENVs if your build requires them to pass ???
-          NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock-key"
+        # env:
+        #   # Add mock ENVs if your build requires them to pass ???
+        #   NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321"
+        #   NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock-key"
