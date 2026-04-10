@@ -37,7 +37,7 @@ jobs:
 
   deploy-prod:
     needs: build-app
-    if: github.ref == 'refs/heads/main' # deploy only if push == main not in ci 
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ci' # deploy only if push == main not in ci 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
