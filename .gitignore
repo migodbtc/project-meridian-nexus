@@ -44,3 +44,8 @@ doc/**
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# cicd 
+.github/secrets
+.vercel
+.env*.local
