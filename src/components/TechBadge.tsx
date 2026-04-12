@@ -8,12 +8,16 @@ import {
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
-import Tooltip from "./Tooltip";
 
 interface TechBadgeProps {
   name: string;
   variant?: "default" | "highlight";
   tooltip?: string;
+  onMouseEnter?: (
+    e: React.MouseEvent<HTMLSpanElement>,
+    content: string,
+  ) => void;
+  onMouseLeave?: () => void;
 }
 
 const techIconMap: Record<string, LucideIcon> = {
@@ -30,22 +34,34 @@ const techIconMap: Record<string, LucideIcon> = {
 };
 
 const techDescriptions: Record<string, string> = {
-  "Next.js": "React framework for production with SSR and SSG",
-  Nextjs: "React framework for production with SSR and SSG",
-  Supabase: "Open-source Firebase alternative with PostgreSQL",
-  Vercel: "Cloud platform optimized for Next.js deployment",
-  "Tailwind CSS": "Utility-first CSS framework for rapid UI design",
-  Tailwind: "Utility-first CSS framework for rapid UI design",
-  "Lucide React": "Beautiful, consistent icon library for React",
-  Lucide: "Beautiful, consistent icon library for React",
-  "Framer Motion": "Animation library for React with gesture support",
-  Framer: "Animation library for React with gesture support",
+  "Next.js":
+    "React framework for production with Server-Side Rendering (SSR), Static Site Generation (SSG), and API routes. Enables full-stack JavaScript applications with optimized performance and SEO.",
+  Nextjs:
+    "React framework for production with Server-Side Rendering (SSR), Static Site Generation (SSG), and API routes. Enables full-stack JavaScript applications with optimized performance and SEO.",
+  Supabase:
+    "Open-source Firebase alternative built on PostgreSQL. Provides real-time databases, authentication, storage, and edge functions with a user-friendly dashboard and powerful APIs.",
+  Vercel:
+    "Cloud platform purpose-built for Next.js and frontend applications. Offers global edge network, serverless functions, automatic deployments from Git, and integrated analytics.",
+  "Tailwind CSS":
+    "Utility-first CSS framework that accelerates UI development. Provides low-level utility classes for building complex, responsive designs without writing custom CSS.",
+  Tailwind:
+    "Utility-first CSS framework that accelerates UI development. Provides low-level utility classes for building complex, responsive designs without writing custom CSS.",
+  "Lucide React":
+    "Comprehensive icon library with 400+ beautiful, customizable SVG icons designed for React applications. Consistent visual language with multiple size and styling options.",
+  Lucide:
+    "Comprehensive icon library with 400+ beautiful, customizable SVG icons designed for React applications. Consistent visual language with multiple size and styling options.",
+  "Framer Motion":
+    "Powerful animation library for React enabling smooth, gesture-driven interactions and complex animation sequences. Simplifies advanced motion design with an intuitive API.",
+  Framer:
+    "Powerful animation library for React enabling smooth, gesture-driven interactions and complex animation sequences. Simplifies advanced motion design with an intuitive API.",
 };
 
 export default function TechBadge({
   name,
   variant = "default",
   tooltip,
+  onMouseEnter,
+  onMouseLeave,
 }: TechBadgeProps) {
   const Icon = techIconMap[name] || Feather;
   const tooltipContent =
@@ -62,18 +78,20 @@ export default function TechBadge({
   };
 
   return (
-    <Tooltip content={tooltipContent}>
-      <span className={`${baseStyles} ${variantStyles[variant]}`}>
-        <Icon
-          size={14}
-          className={
-            variant === "highlight"
-              ? "text-white"
-              : "text-[#3B4FBF] group-hover:text-amber-400"
-          }
-        />
-        {name}
-      </span>
-    </Tooltip>
+    <span
+      className={`${baseStyles} ${variantStyles[variant]}`}
+      onMouseEnter={(e) => onMouseEnter?.(e, tooltipContent)}
+      onMouseLeave={onMouseLeave}
+    >
+      <Icon
+        size={14}
+        className={
+          variant === "highlight"
+            ? "text-white"
+            : "text-[#3B4FBF] group-hover:text-amber-400"
+        }
+      />
+      {name}
+    </span>
   );
 }

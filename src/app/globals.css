@@ -24,3 +24,56 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Minimal scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b4fbf, #fbbf24);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5568d3, #fcd34d);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-color: #3b4fbf transparent;
+  scrollbar-width: thin;
+}
+
+/* Enhanced card hover effects */
+[style*="pexels-fotios-photos-811587"]:hover {
+  background-image:
+    linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.4)),
+    url(/pexels-fotios-photos-811587.jpg) !important;
+  filter: brightness(1.1) !important;
+}
+
+[style*="pexels-felicity-tai-7964468"]:hover {
+  background-image:
+    linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.4)),
+    url(/pexels-felicity-tai-7964468.jpg) !important;
+  filter: brightness(1.1) !important;
+}
+
+[style*="pexels-pixabay-247791"]:hover {
+  background-image:
+    linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.4)),
+    url(/pexels-pixabay-247791.jpg) !important;
+  filter: brightness(1.1) !important;
+}
+
+[style*="6231268270099074472"]:hover {
+  background-image:
+    linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.4)),
+    url(/6231268270099074472.jpg) !important;
+  filter: brightness(1.1) !important;
+}
