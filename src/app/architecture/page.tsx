@@ -1,16 +1,112 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  Layers,
+  CheckCircle2,
+  Code,
+  Database,
+  Cloud,
+  Zap,
+  Palette,
+  Sparkles,
+  Feather,
+  GitBranch,
+  ExternalLink,
+  Workflow,
+} from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -10 },
+  visible: { opacity: 1, x: 0 },
+};
+
+const techIconMap: Record<string, React.ReactNode> = {
+  "Next.js": <Zap size={18} />,
+  React: <Code size={18} />,
+  "Tailwind CSS": <Palette size={18} />,
+  "Framer Motion": <Sparkles size={18} />,
+  "Lucide React": <Feather size={18} />,
+  PostgreSQL: <Database size={18} />,
+  Supabase: <Database size={18} />,
+  TypeScript: <Code size={18} />,
+  Vercel: <Cloud size={18} />,
+};
+
+const toolIconMap: Record<string, React.ReactNode> = {
+  Git: <GitBranch size={18} />,
+  GitHub: <ExternalLink size={18} />,
+  "GitHub Workflows": <Workflow size={18} />,
+};
+
 export default function ArchitecturePage() {
+  const techStack = [
+    {
+      name: "Next.js",
+      description: "React framework for production with SSR and SSG",
+      version: "16.2.3",
+    },
+    {
+      name: "React",
+      description: "UI library with server/client components",
+      version: "19.2.4",
+    },
+    {
+      name: "Tailwind CSS",
+      description: "Utility-first CSS framework",
+      version: "4.0.0",
+    },
+    {
+      name: "Framer Motion",
+      description: "Animation library for React",
+      version: "12.38.0",
+    },
+    {
+      name: "Lucide React",
+      description: "Icon library for React",
+      version: "1.8.0",
+    },
+    {
+      name: "PostgreSQL",
+      description: "Relational database system",
+      version: "Latest",
+    },
+    {
+      name: "Supabase",
+      description: "Firebase alternative with PostgreSQL",
+      version: "-",
+    },
+    {
+      name: "TypeScript",
+      description: "Typed JavaScript superset",
+      version: "Latest",
+    },
+    {
+      name: "Vercel",
+      description: "Cloud deployment platform",
+      version: "-",
+    },
+  ];
+
+  const tools = [
+    { name: "Git", description: "Version control system" },
+    { name: "GitHub", description: "Repository hosting and collaboration" },
+    { name: "GitHub Workflows", description: "CI/CD automation" },
+  ];
+
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-[#0F1117] font-sans">
       <main className="flex flex-1 w-full max-w-7xl gap-3 flex-col items-center py-32 px-16 sm:items-start">
         <Link href="/">
           <motion.button
-            className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-8"
+            className="flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:cursor-pointer transition-colors mb-8"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -21,107 +117,134 @@ export default function ArchitecturePage() {
         </Link>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
           transition={{ duration: 0.4 }}
         >
-          <h1 className="text-4xl font-bold mb-4">
-            <span className="bg-linear-to-r from-[#3B4FBF] to-amber-400 bg-clip-text text-transparent">
-              System Architecture
-            </span>
-          </h1>
-          <p className="text-slate-300 text-lg mb-8">
-            Technologies, Tools, & Building Blocks
+          <p className="text-slate-400 text-lg mb-2">System Architecture</p>
+          <div className="flex items-center gap-3 mb-2">
+            <Layers className="text-[#3B4FBF]" size={32} />
+            <h1 className="text-4xl font-bold">
+              Technologies, Tools, & Building Blocks
+            </h1>
+          </div>
+          <p className="text-slate-500 text-sm mb-8">
+            Learn more about the tech stack used in the project
           </p>
 
-          <div className="space-y-6 text-slate-300">
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-200 mb-3">
-                Tech Stack Overview
-              </h2>
-              <p>
-                The unified web engine is built on a modern, scalable technology
-                stack designed for high performance, reliability, and
-                maintainability.
-              </p>
-            </section>
+          <div className="space-y-8 text-slate-300">
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              variants={containerVariants}
+              transition={{ duration: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <Code className="text-[#3B4FBF]" size={24} />
+                <h2 className="text-2xl font-semibold text-slate-200">
+                  Technologies
+                </h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-700">
+                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                        Technology
+                      </th>
+                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                        Description
+                      </th>
+                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                        Version
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {techStack.map((tech, i) => (
+                      <motion.tr
+                        key={i}
+                        variants={itemVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        transition={{ delay: i * 0.05 }}
+                        viewport={{ once: true }}
+                        className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
+                      >
+                        <td className="py-3 px-4 text-slate-200 font-medium">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#3B4FBF]">
+                              {techIconMap[tech.name]}
+                            </span>
+                            {tech.name}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 text-slate-400">
+                          {tech.description}
+                        </td>
+                        <td className="py-3 px-4 text-slate-500">
+                          {tech.version}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.section>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-200 mb-3">
-                Frontend Layer
-              </h2>
-              <ul className="space-y-2 list-disc list-inside">
-                <li>
-                  <strong>Next.js 16.2.3</strong> - React framework with SSR/SSG
-                  capabilities
-                </li>
-                <li>
-                  <strong>React 19.2.4</strong> - UI library with server/client
-                  components
-                </li>
-                <li>
-                  <strong>Tailwind CSS v4</strong> - Utility-first styling
-                  framework
-                </li>
-                <li>
-                  <strong>Framer Motion v12.38.0</strong> - Animation library
-                </li>
-                <li>
-                  <strong>Lucide React v1.8.0</strong> - Icon system
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-200 mb-3">
-                Backend Layer
-              </h2>
-              <ul className="space-y-2 list-disc list-inside">
-                <li>
-                  <strong>Supabase</strong> - PostgreSQL database with real-time
-                  subscriptions
-                </li>
-                <li>
-                  <strong>Next.js API Routes</strong> - Serverless backend
-                  functions
-                </li>
-                <li>Authentication and authorization services</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-200 mb-3">
-                Infrastructure
-              </h2>
-              <ul className="space-y-2 list-disc list-inside">
-                <li>
-                  <strong>Vercel</strong> - Edge-first cloud platform for
-                  deployment
-                </li>
-                <li>Global CDN for optimized content delivery</li>
-                <li>Continuous deployment from Git</li>
-                <li>Automatic scaling and error tracking</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-200 mb-3">
-                Key Architectural Principles
-              </h2>
-              <ul className="space-y-2 list-disc list-inside">
-                <li>
-                  Full-stack TypeScript for type safety and developer experience
-                </li>
-                <li>
-                  Server and client component separation for optimal performance
-                </li>
-                <li>Real-time data synchronization through Supabase</li>
-                <li>Responsive design with mobile-first approach</li>
-                <li>
-                  Accessibility and performance-optimized component architecture
-                </li>
-              </ul>
-            </section>
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              variants={containerVariants}
+              transition={{ duration: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <CheckCircle2 className="text-[#3B4FBF]" size={24} />
+                <h2 className="text-2xl font-semibold text-slate-200">Tools</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-700">
+                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                        Tool
+                      </th>
+                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                        Purpose
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tools.map((tool, i) => (
+                      <motion.tr
+                        key={i}
+                        variants={itemVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        transition={{ delay: i * 0.05 }}
+                        viewport={{ once: true }}
+                        className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
+                      >
+                        <td className="py-3 px-4 text-slate-200 font-medium">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#3B4FBF]">
+                              {toolIconMap[tool.name]}
+                            </span>
+                            {tool.name}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 text-slate-400">
+                          {tool.description}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.section>
           </div>
         </motion.div>
       </main>
