@@ -63,122 +63,126 @@ export default function ClientPage() {
               <div className="flex items-center gap-2 mb-4">
                 <Users className="text-[#3B4FBF]" size={24} />
                 <h2 className="text-2xl font-semibold text-slate-200">
-                  About Meridian Nexus Group Ltd
+                  About the Client
                 </h2>
               </div>
-              <p>
-                Meridian Nexus Group Ltd is a Managed Talent-as-a-Service (TaaS)
-                agency operating in the modern gig economy space. The
-                organization connects, manages, and empowers freelancers while
-                facilitating seamless project delivery to enterprise and
-                mid-market clients.
+              <p className="text-justify">
+                In this case study, Meridian Nexus Group Ltd commissioned the
+                development of a custom business management platform to support
+                their expanding client and project portfolio. The client is
+                modeled after real-world TaaS agencies and Filipino agencies
+                alike. As stated in the study, the organization sought a unified
+                solution to replace the fragmented tools they had been relying
+                on and bring operational consistency across the entire company.
               </p>
             </motion.section>
 
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">
-                  Core Operations
-                </h2>
-              </div>
-              <div className="space-y-3">
-                {[
-                  "Freelancer acquisition and onboarding",
-                  "Service delivery management and coordination",
-                  "Client relationship and project management",
-                  "Financial settlement and payout processing",
-                  "Community building and engagement",
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    transition={{ delay: i * 0.05 }}
-                    viewport={{ once: true }}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckCircle2
-                      size={20}
-                      className="text-slate-200 shrink-0 mt-0.5"
-                    />
-                    <span>{item}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
+            <div className="grid grid-cols-3 gap-6 w-full">
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Zap className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Core Operations
+                  </h2>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    "Freelancer acquisition and onboarding",
+                    "Service delivery management and coordination",
+                    "Client relationship and project management",
+                    "Financial settlement and payout processing",
+                    "Community building and engagement",
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      variants={itemVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      transition={{ delay: i * 0.05 }}
+                      viewport={{ once: true }}
+                      className="flex items-start gap-3"
+                    >
+                      <CheckCircle2
+                        size={20}
+                        className="text-slate-200 shrink-0 mt-0.5"
+                      />
+                      <span>{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.section>
 
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <SearchCode className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">
-                  Business Challenge
-                </h2>
-              </div>
-              <p className="text-slate-300 mb-2">
-                Disconnected tools causing financial drift and operational
-                blindness
-              </p>
-              <p>
-                The organization faces critical challenges due to fragmented
-                technology infrastructure, leading to incomplete financial
-                visibility and operational inefficiencies across the entire
-                freelancer lifecycle.
-              </p>
-            </motion.section>
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <SearchCode className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Business Challenge
+                  </h2>
+                </div>
+                <p className="text-slate-300 mb-4 text-justify">
+                  The main challenge was the fragmented tools causing
+                  inefficiencies and communication gaps
+                </p>
+                <p className="text-justify">
+                  The agency was juggling between project management tools, time
+                  trackers, client portals, and invoicing software. This
+                  fragmentation led to inefficiencies, data silos, and
+                  communication gaps between teams and clients.
+                </p>
+              </motion.section>
 
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <CheckCircle2 className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">
-                  Key Requirements
-                </h2>
-              </div>
-              <div className="space-y-3">
-                {[
-                  "Unified ledger system for comprehensive financial tracking",
-                  "Real-time operational visibility and reporting",
-                  "Seamless freelancer lifecycle management",
-                  "Reliable audit trails and compliance documentation",
-                  "Scalable architecture for growth",
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    transition={{ delay: i * 0.05 }}
-                    viewport={{ once: true }}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckCircle2
-                      size={20}
-                      className="text-slate-200 shrink-0 mt-0.5"
-                    />
-                    <span>{item}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle2 className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Key Requirements
+                  </h2>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    "Unified ledger system for comprehensive financial tracking",
+                    "Real-time operational visibility and reporting",
+                    "Seamless freelancer lifecycle management",
+                    "Reliable audit trails and compliance documentation",
+                    "Scalable architecture for growth",
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      variants={itemVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      transition={{ delay: i * 0.05 }}
+                      viewport={{ once: true }}
+                      className="flex items-start gap-3"
+                    >
+                      <CheckCircle2
+                        size={20}
+                        className="text-slate-200 shrink-0 mt-0.5"
+                      />
+                      <span>{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.section>
+            </div>
           </div>
         </motion.div>
       </main>

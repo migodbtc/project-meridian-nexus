@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, User } from "lucide-react";
+import { ArrowLeft, User, Code, Mail, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -46,92 +46,80 @@ export default function DeveloperPage() {
           </p>
 
           <div className="space-y-8 text-slate-300">
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <User className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">
-                  Overview
-                </h2>
-              </div>
-              <p>
-                Communeye Software is a boutique software development studio
-                specializing in full-stack web applications, cloud architecture,
-                and innovative digital solutions for enterprise clients.
-              </p>
-            </motion.section>
+            <div className="grid grid-cols-2 gap-6 w-full">
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <User className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Overview
+                  </h2>
+                </div>
+                <p className="text-justify">
+                  Communeye Software is a software solutions brand that aims to
+                  create solutions by producing case studies like this and
+                  engineering solutions for real businesses. Founded by Miguel
+                  Justin in 2026, the main premise of the software is to deliver
+                  a robust and streamlined software solution that is practical,
+                  increases efficiency, and is user-friendly.
+                </p>
+              </motion.section>
 
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <User className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">
-                  Contact & Links
-                </h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b border-slate-700">
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Socials
-                      </th>
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Handle
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <motion.tr
-                      variants={itemVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      transition={{ duration: 0.3 }}
-                      viewport={{ once: true }}
-                      className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
-                    >
-                      <td className="py-3 px-4 text-slate-400">
-                        <span className="text-slate-500">GitHub</span>
-                      </td>
-                      <td className="py-3 px-4 text-slate-400">
-                        <span className="text-slate-500">
-                          @mxgodbtc (Founder GitHub)
-                        </span>
-                      </td>
-                    </motion.tr>
-                    <motion.tr
-                      variants={itemVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      transition={{ duration: 0.3 }}
-                      viewport={{ once: true }}
-                      className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
-                    >
-                      <td className="py-3 px-4 text-slate-400">
-                        <span className="text-slate-500">
-                          Your GitHub username
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-slate-400">
-                        <span className="text-slate-500">
-                          @communeye.software (Official Page)
-                        </span>
-                      </td>
-                    </motion.tr>
-                  </tbody>
-                </table>
-              </div>
-            </motion.section>
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0.15 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <User className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Connect
+                  </h2>
+                </div>
+                <div className="space-y-4">
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    transition={{ delay: 0 }}
+                    viewport={{ once: true }}
+                    className="flex items-center gap-3"
+                  >
+                    <Code className="text-[#3B4FBF]" size={20} />
+                    <div>
+                      <p className="font-semibold text-slate-300">
+                        Founder's Academic GitHub
+                      </p>
+                      <p className="text-slate-400">@mxgodbtc</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    transition={{ delay: 0.05 }}
+                    viewport={{ once: true }}
+                    className="flex items-center gap-3"
+                  >
+                    <Code className="text-[#3B4FBF]" size={20} />
+                    <div>
+                      <p className="font-semibold text-slate-300">
+                        Official Instagram Page
+                      </p>
+                      <p className="text-slate-400">@communeye.software</p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.section>
+            </div>
           </div>
         </motion.div>
       </main>

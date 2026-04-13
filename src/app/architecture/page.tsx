@@ -74,19 +74,9 @@ export default function ArchitecturePage() {
       version: "1.8.0",
     },
     {
-      name: "PostgreSQL",
-      description: "Relational database system",
-      version: "Latest",
-    },
-    {
       name: "Supabase",
       description: "Firebase alternative with PostgreSQL",
       version: "-",
-    },
-    {
-      name: "TypeScript",
-      description: "Typed JavaScript superset",
-      version: "Latest",
     },
     {
       name: "Vercel",
@@ -99,6 +89,19 @@ export default function ArchitecturePage() {
     { name: "Git", description: "Version control system" },
     { name: "GitHub", description: "Repository hosting and collaboration" },
     { name: "GitHub Workflows", description: "CI/CD automation" },
+  ];
+
+  const languages = [
+    {
+      name: "TypeScript",
+      description: "Typed JavaScript superset for type-safe code",
+    },
+    { name: "JavaScript", description: "Core language for web applications" },
+    {
+      name: "PostgreSQL",
+      description: "Advanced relational database language",
+    },
+    { name: "CSS", description: "Styling with Tailwind utilities" },
   ];
 
   return (
@@ -134,117 +137,176 @@ export default function ArchitecturePage() {
           </p>
 
           <div className="space-y-8 text-slate-300">
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Code className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">
-                  Technologies
-                </h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b border-slate-700">
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Technology
-                      </th>
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Description
-                      </th>
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Version
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {techStack.map((tech, i) => (
-                      <motion.tr
-                        key={i}
-                        variants={itemVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        transition={{ delay: i * 0.05 }}
-                        viewport={{ once: true }}
-                        className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
-                      >
-                        <td className="py-3 px-4 text-slate-200 font-medium">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#3B4FBF]">
-                              {techIconMap[tech.name]}
-                            </span>
-                            {tech.name}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-slate-400">
-                          {tech.description}
-                        </td>
-                        <td className="py-3 px-4 text-slate-500">
-                          {tech.version}
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.section>
+            <div className="grid grid-cols-2 grid-rows-2 gap-6 w-full">
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0 }}
+                viewport={{ once: true }}
+                className="row-span-2"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Code className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Technologies
+                  </h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Technology
+                        </th>
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Description
+                        </th>
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Version
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {techStack.map((tech, i) => (
+                        <motion.tr
+                          key={i}
+                          variants={itemVariants}
+                          initial="hidden"
+                          whileInView="visible"
+                          transition={{ delay: i * 0.05 }}
+                          viewport={{ once: true }}
+                          className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
+                        >
+                          <td className="py-3 px-4 text-slate-200 font-medium">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#3B4FBF]">
+                                {techIconMap[tech.name]}
+                              </span>
+                              {tech.name}
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-slate-400">
+                            {tech.description}
+                          </td>
+                          <td className="py-3 px-4 text-slate-500">
+                            {tech.version}
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.section>
 
-            <motion.section
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <CheckCircle2 className="text-[#3B4FBF]" size={24} />
-                <h2 className="text-2xl font-semibold text-slate-200">Tools</h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b border-slate-700">
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Tool
-                      </th>
-                      <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                        Purpose
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tools.map((tool, i) => (
-                      <motion.tr
-                        key={i}
-                        variants={itemVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        transition={{ delay: i * 0.05 }}
-                        viewport={{ once: true }}
-                        className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
-                      >
-                        <td className="py-3 px-4 text-slate-200 font-medium">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#3B4FBF]">
-                              {toolIconMap[tool.name]}
-                            </span>
-                            {tool.name}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-slate-400">
-                          {tool.description}
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.section>
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0.15 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle2 className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Tools
+                  </h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Tool
+                        </th>
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Purpose
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tools.map((tool, i) => (
+                        <motion.tr
+                          key={i}
+                          variants={itemVariants}
+                          initial="hidden"
+                          whileInView="visible"
+                          transition={{ delay: i * 0.05 }}
+                          viewport={{ once: true }}
+                          className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
+                        >
+                          <td className="py-3 px-4 text-slate-200 font-medium">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#3B4FBF]">
+                                {toolIconMap[tool.name]}
+                              </span>
+                              {tool.name}
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-slate-400">
+                            {tool.description}
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.section>
+
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                variants={containerVariants}
+                transition={{ duration: 0.4, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Code className="text-[#3B4FBF]" size={24} />
+                  <h2 className="text-2xl font-semibold text-slate-200">
+                    Languages
+                  </h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Language
+                        </th>
+                        <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                          Purpose
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {languages.map((lang, i) => (
+                        <motion.tr
+                          key={i}
+                          variants={itemVariants}
+                          initial="hidden"
+                          whileInView="visible"
+                          transition={{ delay: i * 0.05 }}
+                          viewport={{ once: true }}
+                          className="border-b border-slate-700/50 hover:bg-slate-900/30 transition"
+                        >
+                          <td className="py-3 px-4 text-slate-200 font-medium">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#3B4FBF]">
+                                <Code size={18} />
+                              </span>
+                              {lang.name}
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-slate-400">
+                            {lang.description}
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.section>
+            </div>
           </div>
         </motion.div>
       </main>
