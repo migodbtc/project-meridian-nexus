@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function PolarisPage() {
+export default function PolarisAuthPage() {
   redirect("/polaris/auth/login");
 }
