@@ -4,6 +4,11 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Check, Lock, LogIn, Mail } from "lucide-react";
 import Layout from "@/layouts/AuthLayout";
+import {
+  isValidEmailFormat,
+  passesPasswordRule,
+  PASSWORD_RULE_MESSAGE,
+} from "@/utils/validation/auth";
 
 interface LoginPayload {
   LoginEmail: string;
@@ -17,9 +22,14 @@ export default function LoginPage() {
     LoginPassword: "",
     LoginRememberMe: false,
   });
+  const [loginErrors, setLoginErrors] = useState<string[]>([]);
 
   const handleLoginInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = event.target;
+
+    if (loginErrors.length > 0) {
+      setLoginErrors([]);
+    }
 
     setLoginForm(
       (prev) =>
@@ -32,12 +42,44 @@ export default function LoginPage() {
 
   const handleLoginSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const errors: string[] = [];
+
+    if (!isValidEmailFormat(loginForm.LoginEmail)) {
+      errors.push("Email: invalid email format.");
+    }
+
+    if (!passesPasswordRule(loginForm.LoginPassword)) {
+      errors.push(`Password: ${PASSWORD_RULE_MESSAGE}`);
+    }
+
+    if (errors.length > 0) {
+      setLoginErrors(errors);
+      return;
+    }
+
+    setLoginErrors([]);
+    alert("You thought you was do somethin 🤣🤣🫵🫵");
     console.log("Login payload", loginForm);
   };
 
   return (
     <Layout cardTitle="Login to Polaris">
       <form className="space-y-4" onSubmit={handleLoginSubmit}>
+        {loginErrors.length > 0 && (
+          <div
+            role="alert"
+            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
+          >
+            <p className="font-semibold">Invalid input fields:</p>
+            <ul className="mt-1 list-disc pl-5">
+              {loginErrors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
             <Mail size={18} />

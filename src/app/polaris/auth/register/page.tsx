@@ -4,6 +4,11 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Check, Lock, Mail, UserPlus } from "lucide-react";
 import Layout from "@/layouts/AuthLayout";
+import {
+  isValidEmailFormat,
+  passesPasswordRule,
+  PASSWORD_RULE_MESSAGE,
+} from "@/utils/validation/auth";
 
 interface RegisterPayload {
   RegisterEmail: string;
@@ -19,9 +24,14 @@ export default function RegisterPage() {
     RegisterConfirmPassword: "",
     RegisterAgreeToTerms: false,
   });
+  const [registerErrors, setRegisterErrors] = useState<string[]>([]);
 
   const handleRegisterInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = event.target;
+
+    if (registerErrors.length > 0) {
+      setRegisterErrors([]);
+    }
 
     setRegisterForm(
       (prev) =>
@@ -34,12 +44,50 @@ export default function RegisterPage() {
 
   const handleRegisterSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const errors: string[] = [];
+
+    if (!isValidEmailFormat(registerForm.RegisterEmail)) {
+      errors.push("Email: invalid email format.");
+    }
+
+    if (!passesPasswordRule(registerForm.RegisterPassword)) {
+      errors.push(`Password: ${PASSWORD_RULE_MESSAGE}`);
+    }
+
+    if (
+      registerForm.RegisterPassword !== registerForm.RegisterConfirmPassword
+    ) {
+      errors.push("Confirm Password: must match Password.");
+    }
+
+    if (errors.length > 0) {
+      setRegisterErrors(errors);
+      return;
+    }
+
+    setRegisterErrors([]);
+    alert("You thought you was do somethin 🤣🤣🫵🫵");
     console.log("Register payload", registerForm);
   };
 
   return (
     <Layout cardTitle="Register">
       <form className="space-y-4" onSubmit={handleRegisterSubmit}>
+        {registerErrors.length > 0 && (
+          <div
+            role="alert"
+            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
+          >
+            <p className="font-semibold">Invalid input fields:</p>
+            <ul className="mt-1 list-disc pl-5">
+              {registerErrors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
             <Mail size={18} />

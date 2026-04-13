@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Mail, Send } from "lucide-react";
 import Layout from "@/layouts/AuthLayout";
+import { isValidEmailFormat } from "@/utils/validation/auth";
 
 interface ForgotPasswordPayload {
   ForgotPasswordEmail: string;
@@ -14,11 +15,18 @@ export default function ForgotPasswordPage() {
     useState<ForgotPasswordPayload>({
       ForgotPasswordEmail: "",
     });
+  const [forgotPasswordErrors, setForgotPasswordErrors] = useState<string[]>(
+    [],
+  );
 
   const handleForgotPasswordInputChange = (
     event: ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = event.target;
+
+    if (forgotPasswordErrors.length > 0) {
+      setForgotPasswordErrors([]);
+    }
 
     setForgotPasswordForm(
       (prev) =>
@@ -31,6 +39,19 @@ export default function ForgotPasswordPage() {
 
   const handleForgotPasswordSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const errors: string[] = [];
+
+    if (!isValidEmailFormat(forgotPasswordForm.ForgotPasswordEmail)) {
+      errors.push("Email: invalid email format.");
+    }
+
+    if (errors.length > 0) {
+      setForgotPasswordErrors(errors);
+      return;
+    }
+
+    setForgotPasswordErrors([]);
     console.log("Forgot password payload", forgotPasswordForm);
   };
 
@@ -41,6 +62,20 @@ export default function ForgotPasswordPage() {
       </p>
 
       <form className="space-y-4" onSubmit={handleForgotPasswordSubmit}>
+        {forgotPasswordErrors.length > 0 && (
+          <div
+            role="alert"
+            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
+          >
+            <p className="font-semibold">Invalid input fields:</p>
+            <ul className="mt-1 list-disc pl-5">
+              {forgotPasswordErrors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
             <Mail size={18} />
