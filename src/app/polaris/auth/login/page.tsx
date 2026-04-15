@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useActionState, useState } from "react";
 import { Check, Lock, LogIn, Mail } from "lucide-react";
+import { useFormStatus } from "react-dom";
 import Layout from "@/layouts/AuthLayout";
 import {
   isValidEmailFormat,
@@ -11,21 +13,31 @@ import {
 } from "@/utils/validation/auth";
 import { LoginPayload } from "@/types/auth";
 
+// extracted so useFormStatus works — must be a child of <form>
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#3B4FBF] to-amber-400 py-2 font-semibold text-white transition hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <LogIn size={18} />
+      {pending ? "SIGNING IN..." : "SIGN IN"}
+    </button>
+  );
+}
+
 export default function LoginPage() {
+  const router = useRouter();
   const [loginForm, setLoginForm] = useState<LoginPayload>({
     LoginEmail: "",
     LoginPassword: "",
     LoginRememberMe: false,
   });
-  const [loginErrors, setLoginErrors] = useState<string[]>([]);
 
   const handleLoginInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = event.target;
-
-    if (loginErrors.length > 0) {
-      setLoginErrors([]);
-    }
-
     setLoginForm(
       (prev) =>
         ({
@@ -35,32 +47,39 @@ export default function LoginPage() {
     );
   };
 
-  const handleLoginSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const loginAction = async (prevState: string[], loginFormData: FormData) => {
     const errors: string[] = [];
 
     if (!isValidEmailFormat(loginForm.LoginEmail)) {
       errors.push("Email: invalid email format.");
     }
 
-    if (!passesPasswordRule(loginForm.LoginPassword)) {
-      errors.push(`Password: ${PASSWORD_RULE_MESSAGE}`);
-    }
+    if (errors.length > 0) return errors;
 
-    if (errors.length > 0) {
-      setLoginErrors(errors);
-      return;
-    }
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginForm),
+      });
 
-    setLoginErrors([]);
-    alert("You thought you was do somethin 🤣🤣🫵🫵");
-    console.log("Login payload", loginForm);
+      const data = await res.json();
+
+      if (!res.ok) return [data.error || "Login failed"];
+
+      router.push("/polaris/dash");
+      return [];
+    } catch (err) {
+      console.error("Login error:", err);
+      return ["An error occurred. Please try again."];
+    }
   };
+
+  const [loginErrors, action, isPending] = useActionState(loginAction, []);
 
   return (
     <Layout cardTitle="Login to Polaris">
-      <form className="space-y-4" onSubmit={handleLoginSubmit}>
+      <form className="space-y-4" action={action}>
         {loginErrors.length > 0 && (
           <div
             role="alert"
@@ -86,6 +105,7 @@ export default function LoginPage() {
             placeholder="you@example.com"
             value={loginForm.LoginEmail}
             onChange={handleLoginInputChange}
+            autoComplete="email"
             className="w-full rounded-lg border border-gray-300 text-slate-800 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
           />
         </div>
@@ -101,6 +121,7 @@ export default function LoginPage() {
             placeholder="••••••••"
             value={loginForm.LoginPassword}
             onChange={handleLoginInputChange}
+            autoComplete="current-password"
             className="w-full rounded-lg border border-gray-300 px-4 py-1.5 transition text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
           />
         </div>
@@ -128,13 +149,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#3B4FBF] to-amber-400 py-2 font-semibold text-white transition hover:opacity-95"
-        >
-          <LogIn size={18} />
-          SIGN IN
-        </button>
+        <SubmitButton />
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-600">

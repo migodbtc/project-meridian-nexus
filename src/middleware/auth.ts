@@ -1,5 +1,4 @@
 import { createClient } from "@/utils/supabase/server";
-import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_AUTH_ROUTES = [
