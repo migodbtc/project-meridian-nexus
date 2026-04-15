@@ -1,0 +1,21 @@
+project_id = "abqrsruyazngqsillxps"
+
+[auth.email.template.confirmation]
+subject = "Confirm your signup to POLARIS"
+content_path = "supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Reset your POLARIS password"
+content_path = "supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Your POLARIS magic link"
+content_path = "supabase/templates/magic_link.html"
+
+[auth.email.template.invite]
+subject = "You are invited to POLARIS"
+content_path = "supabase/templates/invite.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your POLARIS email change"
+content_path = "supabase/templates/email_change.html"
