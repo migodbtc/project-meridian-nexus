@@ -77,7 +77,7 @@ export default function RegisterPage() {
 
       if (!res.ok) return [data.error || "Registration failed"];
 
-      router.push("/polaris/auth/login");
+      router.push("/polaris/auth/login?registered=1");
       return [];
     } catch (err) {
       console.error("Register error:", err);

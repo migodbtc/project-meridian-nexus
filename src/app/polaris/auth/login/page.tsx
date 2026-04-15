@@ -1,19 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useActionState, useState } from "react";
 import { Check, Lock, LogIn, Mail } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import Layout from "@/layouts/AuthLayout";
-import {
-  isValidEmailFormat,
-  passesPasswordRule,
-  PASSWORD_RULE_MESSAGE,
-} from "@/utils/validation/auth";
+import { isValidEmailFormat } from "@/utils/validation/auth";
 import { LoginPayload } from "@/types/auth";
 
-// extracted so useFormStatus works — must be a child of <form>
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -30,6 +25,8 @@ function SubmitButton() {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const registrationSuccess = searchParams?.get("registered") === "1";
   const [loginForm, setLoginForm] = useState<LoginPayload>({
     LoginEmail: "",
     LoginPassword: "",
@@ -75,12 +72,27 @@ export default function LoginPage() {
     }
   };
 
-  const [loginErrors, action, isPending] = useActionState(loginAction, []);
+  const [loginErrors, action] = useActionState(loginAction, []);
+
+  const showSuccessAlert = registrationSuccess && loginErrors.length === 0;
+  const showErrorAlert = !showSuccessAlert && loginErrors.length > 0;
 
   return (
     <Layout cardTitle="Login to Polaris">
       <form className="space-y-4" action={action}>
-        {loginErrors.length > 0 && (
+        {showSuccessAlert && (
+          <div
+            role="status"
+            className="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+          >
+            <p className="font-semibold">Registration complete.</p>
+            <p className="mt-1">
+              Account created successfully. Sign in to continue.
+            </p>
+          </div>
+        )}
+
+        {showErrorAlert && (
           <div
             role="alert"
             className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
