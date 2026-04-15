@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useActionState, useState } from "react";
+import { ChangeEvent, Suspense, useActionState, useState } from "react";
 import { Check, Lock, LogIn, Mail } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import Layout from "@/layouts/AuthLayout";
@@ -23,7 +23,7 @@ function SubmitButton() {
   );
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registrationSuccess = searchParams?.get("registered") === "1";
@@ -174,5 +174,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </Layout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
