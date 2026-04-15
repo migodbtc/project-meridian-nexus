@@ -9,13 +9,7 @@ import {
   passesPasswordRule,
   PASSWORD_RULE_MESSAGE,
 } from "@/utils/validation/auth";
-
-interface RegisterPayload {
-  RegisterEmail: string;
-  RegisterPassword: string;
-  RegisterConfirmPassword: string;
-  RegisterAgreeToTerms: boolean;
-}
+import { RegisterPayload } from "@/types/auth";
 
 export default function RegisterPage() {
   const [registerForm, setRegisterForm] = useState<RegisterPayload>({

@@ -9,12 +9,7 @@ import {
   passesPasswordRule,
   PASSWORD_RULE_MESSAGE,
 } from "@/utils/validation/auth";
-
-interface LoginPayload {
-  LoginEmail: string;
-  LoginPassword: string;
-  LoginRememberMe: boolean;
-}
+import { LoginPayload } from "@/types/auth";
 
 export default function LoginPage() {
   const [loginForm, setLoginForm] = useState<LoginPayload>({
