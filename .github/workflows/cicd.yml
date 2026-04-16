@@ -18,6 +18,7 @@ env:
   NODE_VERSION: "22"
   PNPM_VERSION: "9"
   SUPABASE_CLI_VERSION: "2.91.2"
+  SUPABASE_POOLER_HOST: "aws-1-ap-northeast-2.pooler.supabase.com:5432"
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
@@ -75,7 +76,8 @@ jobs:
 
       - name: Validate migration prerequisites (ci)
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_ID: ${{ secrets.SUPABASE_PROD_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
 
@@ -84,17 +86,20 @@ jobs:
             exit 0
           fi
 
-          if [ -z "${SUPABASE_DB_URL:-}" ]; then
-            echo "::warning::SUPABASE_PROD_URL is empty for preview environment. Skipping CI migration test."
+          if [ -z "${SUPABASE_ID:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
+            echo "::warning::SUPABASE_ID or SUPABASE_DB_PASSWORD is empty for preview environment. Skipping CI migration test."
             exit 0
           fi
+
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
 
           if ! [[ "$SUPABASE_DB_URL" =~ ^postgres(ql)?:// ]]; then
             echo "::error::SUPABASE DB URL must start with postgres:// or postgresql://"
             exit 1
           fi
 
-          DB_HOST=$(echo "$SUPABASE_DB_URL" | sed -E 's#^postgres(ql)?://[^@]+@([^:/?]+).*#\2#')
+          DB_HOST="${SUPABASE_POOLER_HOST%%:*}"
           echo "DB host: $DB_HOST"
 
           if ! getent ahosts "$DB_HOST" >/dev/null 2>&1; then
@@ -104,13 +109,16 @@ jobs:
 
       - name: Apply Supabase DB migrations (ci)
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_ID: ${{ secrets.SUPABASE_PROD_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
-          if [ -z "${SUPABASE_DB_URL:-}" ]; then
-            echo "SUPABASE_PROD_URL is empty for preview environment. Skipping CI migration test."
+          if [ -z "${SUPABASE_ID:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
+            echo "SUPABASE_ID or SUPABASE_DB_PASSWORD is empty for preview environment. Skipping CI migration test."
             exit 0
           fi
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --db-url "$SUPABASE_DB_URL"
 
@@ -149,7 +157,8 @@ jobs:
 
       - name: Validate migration prerequisites
         env:
-          SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_ID: ${{ secrets.SUPABASE_PROD_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
 
@@ -158,17 +167,20 @@ jobs:
             exit 0
           fi
 
-          if [ -z "${SUPABASE_PROD_URL:-}" ]; then
-            echo "::error::SUPABASE_PROD_URL is empty."
+          if [ -z "${SUPABASE_ID:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
+            echo "::error::SUPABASE_ID or SUPABASE_DB_PASSWORD is empty."
             exit 1
           fi
 
-          if ! [[ "$SUPABASE_PROD_URL" =~ ^postgres(ql)?:// ]]; then
-            echo "::error::SUPABASE_PROD_URL must start with postgres:// or postgresql://"
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
+
+          if ! [[ "$SUPABASE_DB_URL" =~ ^postgres(ql)?:// ]]; then
+            echo "::error::Generated SUPABASE_DB_URL must start with postgres:// or postgresql://"
             exit 1
           fi
 
-          DB_HOST=$(echo "$SUPABASE_PROD_URL" | sed -E 's#^postgres(ql)?://[^@]+@([^:/?]+).*#\2#')
+          DB_HOST="${SUPABASE_POOLER_HOST%%:*}"
           echo "DB host: $DB_HOST"
 
           if ! getent ahosts "$DB_HOST" >/dev/null 2>&1; then
@@ -182,11 +194,14 @@ jobs:
 
       - name: Apply Supabase DB migrations (prod)
         env:
-          SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_ID: ${{ secrets.SUPABASE_PROD_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
-          pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --db-url "$SUPABASE_PROD_URL"
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --db-url "$SUPABASE_DB_URL"
 
       - name: Pull Vercel production environment
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
