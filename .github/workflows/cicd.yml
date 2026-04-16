@@ -1,45 +1,44 @@
 name: Next.js CI/CD
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 on:
   push:
     branches: [main, ci]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nextjs-cicd-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "9"
+  SUPABASE_CLI_VERSION: "2.91.2"
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   build-app:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3 #
-        with:
-          version: 9
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          STORE_PATH="$(pnpm store path)"
-          echo "pnpm store path: $STORE_PATH"
-          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,50 +49,109 @@ jobs:
       - name: Build project
         run: pnpm build
 
-  deploy-prod:
+  deploy-ci:
     needs: build-app
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ci' # deploy only if push == main not in ci
+    if: github.event_name == 'push' && github.ref_name == 'ci'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: preview
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      # (Optional) Run your tests or Supabase DB migrations right here!
-      # If these fail, the pipeline stops, and Vercel never deploys.
-      - name: Apply Supabase DB migrations (prod)
+      - name: Pull Vercel preview environment (ci branch)
+        run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Vercel artifacts (ci branch)
+        run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy preview (ci branch)
+        run: npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+
+  deploy-prod:
+    needs: build-app
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate migration prerequisites
         env:
           SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
-          SUPABASE_PROD_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_PROD_SERVICE_ROLE_KEY }}
         run: |
+          set -euo pipefail
+
           if [ ! -d "supabase/migrations" ]; then
             echo "No supabase/migrations directory found; skipping migrations."
             exit 0
           fi
 
-          pnpm dlx supabase@latest migration up \
-            --db-url "$SUPABASE_PROD_URL"
+          if [ -z "${SUPABASE_PROD_URL:-}" ]; then
+            echo "::error::SUPABASE_PROD_URL is empty."
+            exit 1
+          fi
 
-      - name: Pull Vercel Environment Information
+          if ! [[ "$SUPABASE_PROD_URL" =~ ^postgres(ql)?:// ]]; then
+            echo "::error::SUPABASE_PROD_URL must start with postgres:// or postgresql://"
+            exit 1
+          fi
+
+          DB_HOST=$(echo "$SUPABASE_PROD_URL" | sed -E 's#^postgres(ql)?://[^@]+@([^:/?]+).*#\2#')
+          echo "DB host: $DB_HOST"
+
+          if ! getent ahosts "$DB_HOST" >/dev/null 2>&1; then
+            echo "::error::Cannot resolve $DB_HOST from this runner."
+            exit 1
+          fi
+
+          if ! getent ahostsv4 "$DB_HOST" >/dev/null 2>&1; then
+            echo "::warning::No IPv4 record detected for $DB_HOST. GitHub-hosted runners may fail if only IPv6 is available."
+          fi
+
+      - name: Apply Supabase DB migrations (prod)
+        env:
+          SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
+        run: |
+          set -euo pipefail
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --db-url "$SUPABASE_PROD_URL"
+
+      - name: Pull Vercel production environment
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Build Project Artifacts
+      - name: Build Vercel artifacts (prod)
         run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy Project Artifacts to Vercel
+      - name: Deploy production
         run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
