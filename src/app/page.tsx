@@ -36,14 +36,14 @@ export default function Home() {
     setTooltip(null);
   };
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-[#0F1117] font-sans">
+    <div className="flex flex-col flex-1 items-center justify-center font-sans bg-[#0F1117] ">
       <PageLevelTooltip
         content={tooltip?.content || null}
         position={tooltip ? { x: tooltip.x, y: tooltip.y } : { x: 0, y: 0 }}
         isMounted={isMounted}
         isVisible={tooltip !== null}
       />
-      <main className="flex flex-1 w-full max-w-7xl gap-3 flex-col items-center py-32 px-16  sm:items-start">
+      <main className="flex flex-1 w-full max-w-7xl gap-3 flex-col items-center py-16 px-16  sm:items-start">
         <motion.div
           className="flex items-center justify-left gap-3 w-full"
           initial={{ opacity: 0, y: 20 }}
