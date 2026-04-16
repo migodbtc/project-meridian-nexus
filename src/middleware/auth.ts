@@ -34,7 +34,9 @@ export async function authMiddleware(request: NextRequest) {
   }
 
   if (user && isPublicAuthRoute) {
-    return NextResponse.redirect(new URL("/polaris/dash", request.url));
+    return NextResponse.redirect(
+      new URL("/polaris/dash/overview", request.url),
+    );
   }
 
   return response;

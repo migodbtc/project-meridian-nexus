@@ -6,11 +6,11 @@ import { LayoutDashboard, Settings } from "lucide-react";
 import { useSidebar } from "@/components/SidebarContext";
 
 const navItems = [
-  { href: "/polaris/dash", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/polaris/dash/overview", label: "Dashboard", icon: LayoutDashboard },
 ];
 
 const bottomNavItems = [
-  { href: "/polaris/settings", label: "Settings", icon: Settings },
+  { href: "/polaris/dash/settings", label: "Settings", icon: Settings },
 ];
 
 export default function SidebarNavigation() {
@@ -47,7 +47,6 @@ export default function SidebarNavigation() {
                 <li key={href}>
                   <Link
                     href={href}
-                    onClick={closeSidebar}
                     className={[
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
                       isActive
@@ -72,7 +71,6 @@ export default function SidebarNavigation() {
                 <li key={href}>
                   <Link
                     href={href}
-                    onClick={closeSidebar}
                     className={[
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
                       isActive
