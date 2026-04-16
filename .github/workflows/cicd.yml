@@ -91,7 +91,8 @@ jobs:
             exit 0
           fi
 
-          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          NORMALIZED_SUPABASE_DB_PASSWORD=$(node -e "const p=process.env.SUPABASE_DB_PASSWORD||''; let d=p; try{d=decodeURIComponent(p)}catch{} process.stdout.write(d)")
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.NORMALIZED_SUPABASE_DB_PASSWORD||''))")
           SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
 
           if ! [[ "$SUPABASE_DB_URL" =~ ^postgres(ql)?:// ]]; then
@@ -117,7 +118,8 @@ jobs:
             echo "SUPABASE_ID or SUPABASE_DB_PASSWORD is empty for preview environment. Skipping CI migration test."
             exit 0
           fi
-          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          NORMALIZED_SUPABASE_DB_PASSWORD=$(node -e "const p=process.env.SUPABASE_DB_PASSWORD||''; let d=p; try{d=decodeURIComponent(p)}catch{} process.stdout.write(d)")
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.NORMALIZED_SUPABASE_DB_PASSWORD||''))")
           SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --db-url "$SUPABASE_DB_URL"
@@ -172,7 +174,8 @@ jobs:
             exit 1
           fi
 
-          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          NORMALIZED_SUPABASE_DB_PASSWORD=$(node -e "const p=process.env.SUPABASE_DB_PASSWORD||''; let d=p; try{d=decodeURIComponent(p)}catch{} process.stdout.write(d)")
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.NORMALIZED_SUPABASE_DB_PASSWORD||''))")
           SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
 
           if ! [[ "$SUPABASE_DB_URL" =~ ^postgres(ql)?:// ]]; then
@@ -198,7 +201,8 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
-          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.SUPABASE_DB_PASSWORD))")
+          NORMALIZED_SUPABASE_DB_PASSWORD=$(node -e "const p=process.env.SUPABASE_DB_PASSWORD||''; let d=p; try{d=decodeURIComponent(p)}catch{} process.stdout.write(d)")
+          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.NORMALIZED_SUPABASE_DB_PASSWORD||''))")
           SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --db-url "$SUPABASE_DB_URL"
