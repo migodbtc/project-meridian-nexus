@@ -118,9 +118,8 @@ jobs:
             echo "SUPABASE_ID or SUPABASE_DB_PASSWORD is empty for preview environment. Skipping CI migration test."
             exit 0
           fi
-          NORMALIZED_SUPABASE_DB_PASSWORD=$(node -e "const p=process.env.SUPABASE_DB_PASSWORD||''; let d=p; try{d=decodeURIComponent(p)}catch{} process.stdout.write(d)")
-          ENCODED_SUPABASE_DB_PASSWORD=$(node -e "process.stdout.write(encodeURIComponent(process.env.NORMALIZED_SUPABASE_DB_PASSWORD||''))")
-          SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${ENCODED_SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
+
+          SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --debug --db-url "$SUPABASE_DB_URL"
 
