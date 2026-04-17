@@ -87,7 +87,9 @@ function LoginPageContent() {
           >
             <p className="font-semibold">Registration complete.</p>
             <p className="mt-1">
-              Account created successfully. Sign in to continue.
+              Account created successfully! To proceed to your dashboard,
+              confirm your email address by clicking on the confirmation email
+              sent!
             </p>
           </div>
         )}
