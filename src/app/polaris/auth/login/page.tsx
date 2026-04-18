@@ -27,6 +27,9 @@ function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registrationSuccess = searchParams?.get("registered") === "1";
+  const logoutStatus = searchParams?.get("logout");
+  const logoutSuccess = logoutStatus === "success";
+  const logoutError = logoutStatus === "failed";
   const [loginForm, setLoginForm] = useState<LoginPayload>({
     LoginEmail: "",
     LoginPassword: "",
@@ -80,6 +83,26 @@ function LoginPageContent() {
   return (
     <Layout cardTitle="Login to Polaris">
       <form className="space-y-4" action={action}>
+        {logoutSuccess && (
+          <div
+            role="status"
+            className="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+          >
+            <p className="font-semibold">Logged out successfully.</p>
+            <p className="mt-1">You can sign in again anytime.</p>
+          </div>
+        )}
+
+        {logoutError && (
+          <div
+            role="alert"
+            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
+          >
+            <p className="font-semibold">Logout failed.</p>
+            <p className="mt-1">Please try logging out again.</p>
+          </div>
+        )}
+
         {showSuccessAlert && (
           <div
             role="status"
@@ -166,13 +189,19 @@ function LoginPageContent() {
         <SubmitButton />
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-600">
+      <p className="mt-6 text-left text-sm text-gray-500">
         Don&apos;t have an account?{" "}
         <Link
           href="/polaris/auth/register"
           className="font-semibold text-[#3B4FBF] hover:underline"
         >
           Sign up
+        </Link>
+      </p>
+      <p className="text-left text-sm text-gray-500">
+        Want to go back to the main page? Click{" "}
+        <Link href="/" className="font-semibold text-[#3B4FBF] hover:underline">
+          here
         </Link>
       </p>
     </Layout>

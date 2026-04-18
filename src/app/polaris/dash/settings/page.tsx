@@ -200,14 +200,6 @@ export default function SettingsPage() {
                 >
                   Forgot Password
                 </Link>
-
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-lg border border-rose-300 px-4 py-2 text-sm font-medium text-rose-700 transition hover:cursor-pointer hover:bg-rose-50"
-                >
-                  <LogOut size={15} />
-                  Log Out
-                </button>
               </div>
             </div>
           ) : null}

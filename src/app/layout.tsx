@@ -26,7 +26,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased `}
+      data-theme="dark"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full flex flex-col">
         <RouteChrome>{children}</RouteChrome>
