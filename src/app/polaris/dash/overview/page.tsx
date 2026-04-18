@@ -9,8 +9,10 @@ export default function OverviewPage() {
         </p>
         <h2 className="text-2xl font-semibold text-slate-900">Coming Soon!</h2>
         <p className="text-sm text-slate-500">
-          Many more features to be displayed within this application. Stay tuned
-          for the progress!
+          Polaris (along with Project North Star) is a work-in-progress, with
+          stable changes updated every week. More features will come! Watch the
+          Instagram page (@communeye.software) for updates, and thank you for
+          visiting!
         </p>
       </div>
     </div>

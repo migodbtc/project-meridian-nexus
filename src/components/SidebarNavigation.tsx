@@ -6,7 +6,7 @@ import { LayoutDashboard, Settings } from "lucide-react";
 import { useSidebar } from "@/components/SidebarContext";
 
 const navItems = [
-  { href: "/polaris/dash/overview", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/polaris/dash/overview", label: "Overview", icon: LayoutDashboard },
 ];
 
 const bottomNavItems = [

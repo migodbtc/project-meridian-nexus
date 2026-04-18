@@ -169,7 +169,7 @@ export default function RegisterPage() {
         <SubmitButton />
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-600">
+      <p className="mt-6 text-left text-sm text-gray-600">
         Already have account?{" "}
         <Link
           href="/polaris/auth/login"

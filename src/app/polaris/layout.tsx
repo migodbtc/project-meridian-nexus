@@ -9,5 +9,5 @@ export default function PolarisLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <section className="theme-light min-h-screen">{children}</section>;
 }
