@@ -34,6 +34,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Validation: Terms and privacy policy must be accepted
+  if (!body.RegisterAgreeToTerms) {
+    return NextResponse.json(
+      { error: "Terms and Conditions must be accepted" },
+      { status: 400 },
+    );
+  }
+
+  if (!body.RegisterAgreeToPrivacy) {
+    return NextResponse.json(
+      { error: "Privacy Policy must be accepted" },
+      { status: 400 },
+    );
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: body.RegisterEmail,

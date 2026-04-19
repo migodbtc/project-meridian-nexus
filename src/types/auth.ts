@@ -9,4 +9,5 @@ export interface RegisterPayload {
   RegisterPassword: string;
   RegisterConfirmPassword: string;
   RegisterAgreeToTerms: boolean;
+  RegisterAgreeToPrivacy: boolean;
 }
