@@ -25,6 +25,7 @@ import {
   PASSWORD_RULE_MESSAGE,
 } from "@/utils/validation/auth";
 import { RegisterPayload } from "@/types/auth";
+import { queueFlashToast, showErrorToast } from "@/utils/toast";
 
 type SubmitButtonProps = {
   disabled: boolean;
@@ -289,7 +290,13 @@ export default function RegisterPage() {
 
       if (!res.ok) return [data.error || "Registration failed"];
 
-      router.push("/polaris/auth/login?registered=1");
+      queueFlashToast({
+        type: "success",
+        title: "Registration complete",
+        description:
+          "Account created successfully. Confirm your email before signing in.",
+      });
+      router.push("/polaris/auth/login");
       return [];
     } catch (err) {
       console.error("Register error:", err);
@@ -298,6 +305,11 @@ export default function RegisterPage() {
   };
 
   const [registerErrors, action] = useActionState(registerAction, []);
+
+  useEffect(() => {
+    if (registerErrors.length === 0) return;
+    showErrorToast("Invalid input fields", registerErrors.join(" "));
+  }, [registerErrors]);
 
   const openTermsModal = () => setActiveModal("terms");
   const openPrivacyModal = () => setActiveModal("privacy");
@@ -339,20 +351,6 @@ export default function RegisterPage() {
       ) : null}
 
       <form className="space-y-4" action={action}>
-        {registerErrors.length > 0 && (
-          <div
-            role="alert"
-            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
-          >
-            <p className="font-semibold">Invalid input fields:</p>
-            <ul className="mt-1 list-disc pl-5">
-              {registerErrors.map((error) => (
-                <li key={error}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
             <Mail size={18} />
@@ -454,7 +452,7 @@ export default function RegisterPage() {
         <SubmitButton disabled={consentMissing} />
       </form>
 
-      <p className="mt-6 text-left text-sm text-gray-600">
+      <p className="mt-6 text-center text-sm text-gray-600">
         Already have account?{" "}
         <Link
           href="/polaris/auth/login"

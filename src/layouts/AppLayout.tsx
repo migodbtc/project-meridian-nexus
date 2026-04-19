@@ -6,6 +6,7 @@ import { LogOut, PanelLeft, PanelLeftClose, User, Menu } from "lucide-react";
 import SidebarNavigation from "@/components/SidebarNavigation";
 import { useSidebar } from "@/components/SidebarContext";
 import { useRouter } from "next/navigation";
+import { queueFlashToast, showErrorToast } from "@/utils/toast";
 
 export default function AppLayout({
   children,
@@ -18,7 +19,6 @@ export default function AppLayout({
   const { isOpen, closeSidebar, toggleSidebar } = useSidebar();
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
-  const [logoutFailed, setLogoutFailed] = useState(false);
 
   const handleProfileClick = () => {
     setMenuOpen(false);
@@ -37,15 +37,18 @@ export default function AppLayout({
       const data = await response.json();
 
       if (!response.ok || !data?.success) {
-        setLogoutFailed(true);
-        setTimeout(() => setLogoutFailed(false), 2500);
+        showErrorToast("Logout failed", "Please try logging out again.");
         return;
       }
 
-      router.push("/polaris/auth/login?logout=success");
+      queueFlashToast({
+        type: "success",
+        title: "Logged out successfully",
+        description: "You can sign in again anytime.",
+      });
+      router.push("/polaris/auth/login");
     } catch {
-      setLogoutFailed(true);
-      setTimeout(() => setLogoutFailed(false), 2500);
+      showErrorToast("Logout failed", "Please try logging out again.");
     } finally {
       setLogoutPending(false);
     }
@@ -66,12 +69,6 @@ export default function AppLayout({
         <SidebarNavigation />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          {logoutFailed ? (
-            <div className="fixed right-4 top-4 z-60 rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm text-rose-700 shadow-lg">
-              Logout failed for now.
-            </div>
-          ) : null}
-
           <header className="z-10 flex h-20 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button

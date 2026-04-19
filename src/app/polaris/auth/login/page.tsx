@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, Suspense, useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useActionState, useEffect, useState } from "react";
 import { Check, Lock, LogIn, Mail } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import Layout from "@/layouts/AuthLayout";
 import { isValidEmailFormat } from "@/utils/validation/auth";
 import { LoginPayload } from "@/types/auth";
+import { showErrorToast, useFlashToast } from "@/utils/toast";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -25,11 +26,7 @@ function SubmitButton() {
 
 function LoginPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const registrationSuccess = searchParams?.get("registered") === "1";
-  const logoutStatus = searchParams?.get("logout");
-  const logoutSuccess = logoutStatus === "success";
-  const logoutError = logoutStatus === "failed";
+  useFlashToast();
   const [loginForm, setLoginForm] = useState<LoginPayload>({
     LoginEmail: "",
     LoginPassword: "",
@@ -48,6 +45,9 @@ function LoginPageContent() {
   };
 
   const loginAction = async (prevState: string[], loginFormData: FormData) => {
+    void prevState;
+    void loginFormData;
+
     const errors: string[] = [];
 
     if (!isValidEmailFormat(loginForm.LoginEmail)) {
@@ -77,60 +77,14 @@ function LoginPageContent() {
 
   const [loginErrors, action] = useActionState(loginAction, []);
 
-  const showSuccessAlert = registrationSuccess && loginErrors.length === 0;
-  const showErrorAlert = !showSuccessAlert && loginErrors.length > 0;
+  useEffect(() => {
+    if (loginErrors.length === 0) return;
+    showErrorToast("Error encountered!", loginErrors.join(" "));
+  }, [loginErrors]);
 
   return (
     <Layout cardTitle="Login to Polaris">
       <form className="space-y-4" action={action}>
-        {logoutSuccess && (
-          <div
-            role="status"
-            className="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
-          >
-            <p className="font-semibold">Logged out successfully.</p>
-            <p className="mt-1">You can sign in again anytime.</p>
-          </div>
-        )}
-
-        {logoutError && (
-          <div
-            role="alert"
-            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
-          >
-            <p className="font-semibold">Logout failed.</p>
-            <p className="mt-1">Please try logging out again.</p>
-          </div>
-        )}
-
-        {showSuccessAlert && (
-          <div
-            role="status"
-            className="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
-          >
-            <p className="font-semibold">Registration complete.</p>
-            <p className="mt-1">
-              Account created successfully! To proceed to your dashboard,
-              confirm your email address by clicking on the confirmation email
-              sent!
-            </p>
-          </div>
-        )}
-
-        {showErrorAlert && (
-          <div
-            role="alert"
-            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
-          >
-            <p className="font-semibold">Invalid input fields:</p>
-            <ul className="mt-1 list-disc pl-5">
-              {loginErrors.map((error) => (
-                <li key={error}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
             <Mail size={18} />
@@ -189,7 +143,7 @@ function LoginPageContent() {
         <SubmitButton />
       </form>
 
-      <p className="mt-6 text-left text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-gray-500">
         Don&apos;t have an account?{" "}
         <Link
           href="/polaris/auth/register"
@@ -198,7 +152,7 @@ function LoginPageContent() {
           Sign up
         </Link>
       </p>
-      <p className="text-left text-sm text-gray-500">
+      <p className="text-center text-sm text-gray-500">
         Want to go back to the main page? Click{" "}
         <Link href="/" className="font-semibold text-[#3B4FBF] hover:underline">
           here
@@ -209,9 +163,5 @@ function LoginPageContent() {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={null}>
-      <LoginPageContent />
-    </Suspense>
-  );
+  return <LoginPageContent />;
 }
