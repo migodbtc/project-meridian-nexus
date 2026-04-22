@@ -108,7 +108,7 @@ export default function AppLayout({
                     <button
                       type="button"
                       onClick={handleProfileClick}
-                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 first:rounded-t-lg"
+                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 first:rounded-t-lg hover:cursor-pointer"
                     >
                       <User size={16} />
                       Profile
@@ -117,7 +117,7 @@ export default function AppLayout({
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2 last:rounded-b-lg border-t border-slate-200"
+                      className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2 last:rounded-b-lg border-t border-slate-200 hover:cursor-pointer"
                     >
                       <LogOut size={16} />
                       {logoutPending ? "Logging Out..." : "Log Out"}

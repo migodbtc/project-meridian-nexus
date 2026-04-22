@@ -1,42 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useActionState, useEffect, useState } from "react";
 import { KeyRound, Lock } from "lucide-react";
+import { useFormStatus } from "react-dom";
 import Layout from "@/layouts/AuthLayout";
-import {
-  passesPasswordRule,
-  PASSWORD_RULE_MESSAGE,
-} from "@/utils/validation/auth";
+import { showErrorToast, queueFlashToast } from "@/utils/toast";
+import { ChangePasswordPayload } from "@/types/auth";
 
-interface ChangePasswordPayload {
-  ChangeCurrentPassword: string;
-  ChangeNewPassword: string;
-  ChangeConfirmNewPassword: string;
+/**
+ * SubmitButton component that displays the password update submit button.
+ * Shows loading state ("UPDATING...") while form submission is pending.
+ */
+function SubmitButton({ isRedirecting }: { isRedirecting: boolean }) {
+  const { pending } = useFormStatus();
+  const isDisabled = pending || isRedirecting;
+  return (
+    <button
+      type="submit"
+      disabled={isDisabled}
+      className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#3B4FBF] to-amber-400 py-2 font-semibold text-white transition hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <KeyRound size={18} />
+      {pending ? "UPDATING..." : "UPDATE PASSWORD"}
+    </button>
+  );
 }
 
-const MOCK_CURRENT_PASSWORD = "Password123";
-
+/**
+ * ChangePasswordPage component for authenticated users to update their password.
+ * Validates current password, new password, and confirmation match before submitting to the API.
+ * On success, redirects to settings page; on error, displays toast notification.
+ */
 export default function ChangePasswordPage() {
+  // External Hooks/Contexts
+  const router = useRouter();
+
+  // Form State
   const [changePasswordForm, setChangePasswordForm] =
     useState<ChangePasswordPayload>({
       ChangeCurrentPassword: "",
       ChangeNewPassword: "",
       ChangeConfirmNewPassword: "",
     });
-  const [changePasswordErrors, setChangePasswordErrors] = useState<string[]>(
-    [],
-  );
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
+  // Handler Actions
   const handleChangePasswordInputChange = (
     event: ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = event.target;
-
-    if (changePasswordErrors.length > 0) {
-      setChangePasswordErrors([]);
-    }
-
     setChangePasswordForm(
       (prev) =>
         ({
@@ -46,119 +60,146 @@ export default function ChangePasswordPage() {
     );
   };
 
-  const handleChangePasswordSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  // Handler Actions (Async)
+  const changePasswordAction = async (
+    prevState: string[],
+    changePasswordFormData: FormData,
+  ) => {
+    void prevState;
+    void changePasswordFormData;
 
     const errors: string[] = [];
 
-    // Placeholder check until auth/session verification is wired up.
-    if (changePasswordForm.ChangeCurrentPassword !== MOCK_CURRENT_PASSWORD) {
-      errors.push("Current Password: old password is incorrect.");
+    if (!changePasswordForm.ChangeCurrentPassword) {
+      errors.push("Current password is required");
     }
 
-    if (!passesPasswordRule(changePasswordForm.ChangeNewPassword)) {
-      errors.push(`New Password: ${PASSWORD_RULE_MESSAGE}`);
+    if (!changePasswordForm.ChangeNewPassword) {
+      errors.push("New password is required");
+    }
+
+    if (!changePasswordForm.ChangeConfirmNewPassword) {
+      errors.push("Password confirmation is required");
     }
 
     if (
       changePasswordForm.ChangeNewPassword !==
       changePasswordForm.ChangeConfirmNewPassword
     ) {
-      errors.push("Confirm New Password: must match New Password.");
+      errors.push("New passwords do not match");
     }
 
-    if (errors.length > 0) {
-      setChangePasswordErrors(errors);
-      return;
-    }
+    if (errors.length > 0) return errors;
 
-    setChangePasswordErrors([]);
-    console.log("Change password payload", changePasswordForm);
+    try {
+      const response = await fetch("/api/auth/change", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword: changePasswordForm.ChangeCurrentPassword,
+          newPassword: changePasswordForm.ChangeNewPassword,
+          confirmPassword: changePasswordForm.ChangeConfirmNewPassword,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success)
+        return result.errors || ["Failed to change password"];
+
+      queueFlashToast({
+        type: "success",
+        title: "Password updated",
+        description: "Your password has been changed successfully.",
+      });
+      setIsRedirecting(true);
+      setTimeout(() => {
+        router.push("/polaris/dash/settings");
+      }, 500);
+      return [];
+    } catch (err) {
+      console.error("Change password error:", err);
+      return ["An error occurred. Please try again."];
+    }
   };
+
+  // Action State
+  const [changePasswordErrors, action] = useActionState(
+    changePasswordAction,
+    [],
+  );
+
+  // Effects
+  useEffect(() => {
+    if (changePasswordErrors.length === 0) return;
+    showErrorToast("Error encountered!", changePasswordErrors.join(" "));
+  }, [changePasswordErrors]);
 
   return (
     <Layout cardTitle="Change Password">
-      <form className="space-y-4" onSubmit={handleChangePasswordSubmit}>
-        {changePasswordErrors.length > 0 && (
-          <div
-            role="alert"
-            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800"
-          >
-            <p className="font-semibold">Invalid input fields:</p>
-            <ul className="mt-1 list-disc pl-5">
-              {changePasswordErrors.map((error) => (
-                <li key={error}>{error}</li>
-              ))}
-            </ul>
+      <div className={isRedirecting ? "pointer-events-none opacity-50" : ""}>
+        <form className="space-y-4" action={action}>
+          <div>
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Lock size={18} />
+              Current password
+            </label>
+            <input
+              type="password"
+              name="ChangeCurrentPassword"
+              placeholder="Current password"
+              value={changePasswordForm.ChangeCurrentPassword}
+              onChange={handleChangePasswordInputChange}
+              disabled={isRedirecting}
+              className="w-full rounded-lg border border-gray-300 text-slate-800 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF] disabled:opacity-50 disabled:cursor-not-allowed"
+            />
           </div>
-        )}
 
-        <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-            <Lock size={18} />
-            Current password
-          </label>
-          <input
-            type="password"
-            name="ChangeCurrentPassword"
-            placeholder="Current password"
-            value={changePasswordForm.ChangeCurrentPassword}
-            onChange={handleChangePasswordInputChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            Demo only for now: current password is Password123.
-          </p>
-        </div>
+          <div>
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Lock size={18} />
+              New password
+            </label>
+            <input
+              type="password"
+              name="ChangeNewPassword"
+              placeholder="New password"
+              value={changePasswordForm.ChangeNewPassword}
+              onChange={handleChangePasswordInputChange}
+              disabled={isRedirecting}
+              className="w-full rounded-lg border border-gray-300 text-slate-800 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF] disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
 
-        <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-            <Lock size={18} />
-            New password
-          </label>
-          <input
-            type="password"
-            name="ChangeNewPassword"
-            placeholder="New password"
-            value={changePasswordForm.ChangeNewPassword}
-            onChange={handleChangePasswordInputChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
-          />
-        </div>
+          <div>
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Lock size={18} />
+              Confirm new password
+            </label>
+            <input
+              type="password"
+              name="ChangeConfirmNewPassword"
+              placeholder="Confirm new password"
+              value={changePasswordForm.ChangeConfirmNewPassword}
+              onChange={handleChangePasswordInputChange}
+              disabled={isRedirecting}
+              className="w-full rounded-lg border border-gray-300 text-slate-800 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF] disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
 
-        <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-            <Lock size={18} />
-            Confirm new password
-          </label>
-          <input
-            type="password"
-            name="ChangeConfirmNewPassword"
-            placeholder="Confirm new password"
-            value={changePasswordForm.ChangeConfirmNewPassword}
-            onChange={handleChangePasswordInputChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
-          />
-        </div>
+          <SubmitButton isRedirecting={isRedirecting} />
+        </form>
 
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#3B4FBF] to-amber-400 py-2 font-semibold text-white transition hover:opacity-95"
-        >
-          <KeyRound size={18} />
-          UPDATE PASSWORD
-        </button>
-      </form>
-
-      <p className="mt-6 text-center text-sm text-gray-600">
-        Need reset link instead?{" "}
-        <Link
-          href="/polaris/auth/forgot-password"
-          className="font-semibold text-[#3B4FBF] hover:underline"
-        >
-          Forgot password
-        </Link>
-      </p>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Okay with your password?{" "}
+          <Link
+            href="/polaris/dash/settings"
+            className="font-semibold text-[#3B4FBF] hover:underline"
+          >
+            Back to Settings
+          </Link>
+        </p>
+      </div>
     </Layout>
   );
 }

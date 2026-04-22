@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { CheckCircle2, TriangleAlert } from "lucide-react";
 import { createElement, useEffect } from "react";
 import { toast } from "sonner";

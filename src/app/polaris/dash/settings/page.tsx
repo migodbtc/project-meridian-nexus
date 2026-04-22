@@ -1,12 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { Settings, User, Bell, LifeBuoy, Lock, LogOut } from "lucide-react";
+import {
+  Settings,
+  User,
+  Bell,
+  LifeBuoy,
+  Lock,
+  LogOut,
+  BadgeQuestionMark,
+  Save,
+} from "lucide-react";
 import { useState } from "react";
+import { useFlashToast } from "@/utils/toast";
 
 type SettingsTab = "account" | "preferences" | "support";
 
 export default function SettingsPage() {
+  useFlashToast();
   const [activeTab, setActiveTab] = useState<SettingsTab>("account");
 
   return (
@@ -178,28 +189,24 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center justify-between">
                 <button
                   type="button"
-                  className="rounded-lg bg-[#3B4FBF] px-4 py-2 text-sm font-semibold text-white transition hover:cursor-pointer hover:opacity-95"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#3B4FBF] px-4 py-2 text-sm font-semibold text-white transition hover:cursor-pointer hover:opacity-95"
                 >
+                  <Save size={15} />
                   Save Changes
                 </button>
 
-                <Link
-                  href="/polaris/auth/change-password"
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:cursor-pointer hover:bg-slate-50"
-                >
-                  <Lock size={15} />
-                  Change Password
-                </Link>
-
-                <Link
-                  href="/polaris/auth/forgot-password"
-                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:cursor-pointer hover:bg-slate-50"
-                >
-                  Forgot Password
-                </Link>
+                <div className="flex flex-row gap-2">
+                  <Link
+                    href="/polaris/auth/change-password"
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:cursor-pointer hover:bg-slate-50"
+                  >
+                    <Lock size={15} />
+                    Change Password
+                  </Link>
+                </div>
               </div>
             </div>
           ) : null}

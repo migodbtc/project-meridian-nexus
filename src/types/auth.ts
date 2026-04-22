@@ -11,3 +11,9 @@ export interface RegisterPayload {
   RegisterAgreeToTerms: boolean;
   RegisterAgreeToPrivacy: boolean;
 }
+
+export interface ChangePasswordPayload {
+  ChangeCurrentPassword: string;
+  ChangeNewPassword: string;
+  ChangeConfirmNewPassword: string;
+}
