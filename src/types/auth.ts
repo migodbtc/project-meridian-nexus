@@ -17,3 +17,7 @@ export interface ChangePasswordPayload {
   ChangeNewPassword: string;
   ChangeConfirmNewPassword: string;
 }
+
+export interface ForgotPasswordPayload {
+  ForgotPasswordEmail: string;
+}
