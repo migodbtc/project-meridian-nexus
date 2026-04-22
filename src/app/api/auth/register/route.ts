@@ -50,9 +50,13 @@ export async function POST(req: NextRequest) {
   }
 
   const supabase = await createClient();
+  const emailRedirectTo = `${req.nextUrl.origin}/api/auth/confirmed`;
   const { data, error } = await supabase.auth.signUp({
     email: body.RegisterEmail,
     password: body.RegisterPassword,
+    options: {
+      emailRedirectTo,
+    },
   });
 
   if (error) {
