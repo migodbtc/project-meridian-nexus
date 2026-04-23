@@ -6,7 +6,7 @@ import { LogOut, PanelLeft, PanelLeftClose, User, Menu } from "lucide-react";
 import SidebarNavigation from "@/components/SidebarNavigation";
 import { useSidebar } from "@/components/SidebarContext";
 import { useRouter } from "next/navigation";
-import { queueFlashToast, showErrorToast } from "@/utils/toast";
+import { queueFlashToast, showErrorToast, useFlashToast } from "@/utils/toast";
 
 export default function AppLayout({
   children,
@@ -16,6 +16,7 @@ export default function AppLayout({
   userEmail?: string;
 }) {
   const router = useRouter();
+  useFlashToast();
   const { isOpen, closeSidebar, toggleSidebar } = useSidebar();
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);

@@ -15,18 +15,23 @@ returns user_role as $$
   select role from profiles where id = auth.uid();
 $$ language sql security definer stable;
 
--- 1. Users can read their own profile (non-guests only)
+-- 1. Users can read their own profile (all authenticated users, including guests)
 create policy "self: read own profile"
 on profiles for select
-using (id = auth.uid() and get_my_role() != 'guest');
+using (id = auth.uid());
 
 -- 2. Users can update their own profile but cannot change their role
 create policy "self: update own profile"
 on profiles for update
-using (id = auth.uid() and get_my_role() != 'guest')
+using (id = auth.uid())
 with check (role = get_my_role());
 
--- 3. Operations and finance can read profiles at or below their level
+-- 3. Users can recreate their own missing profile row as guest (backfill for legacy accounts)
+create policy "self: insert own profile"
+on profiles for insert
+with check (id = auth.uid() and role = 'guest'::user_role);
+
+-- 4. Operations and finance can read profiles at or below their level
 create policy "ops_finance: read same and below"
 on profiles for select
 using (
@@ -35,18 +40,18 @@ using (
   and id != auth.uid()
 );
 
--- 4. Admin can read everyone except superadmin
+-- 5. Admin can read everyone except superadmin
 create policy "admin: read below superadmin"
 on profiles for select
 using (get_my_role() = 'admin' and role < 'superadmin'::user_role);
 
--- 5. Admin can update/delete anyone strictly below them
+-- 6. Admin can update/delete anyone strictly below them
 create policy "admin: write below admin"
 on profiles for all
 using (get_my_role() = 'admin' and role < 'admin'::user_role and id != auth.uid())
 with check (role < 'admin'::user_role);
 
--- 6. Superadmin can do everything
+-- 7. Superadmin can do everything
 create policy "superadmin: full access"
 on profiles for all
 using (get_my_role() = 'superadmin')

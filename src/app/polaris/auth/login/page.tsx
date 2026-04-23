@@ -8,7 +8,7 @@ import { useFormStatus } from "react-dom";
 import Layout from "@/layouts/AuthLayout";
 import { isValidEmailFormat } from "@/utils/validation/auth";
 import { LoginPayload } from "@/types/auth";
-import { showErrorToast, useFlashToast } from "@/utils/toast";
+import { queueFlashToast, showErrorToast, useFlashToast } from "@/utils/toast";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -67,6 +67,11 @@ function LoginPageContent() {
 
       if (!res.ok) return [data.error || "Login failed"];
 
+      queueFlashToast({
+        type: "success",
+        title: "Login success!",
+        description: "Authentication is a success, welcome back to Polaris!",
+      });
       router.push("/polaris/dash");
       return [];
     } catch (err) {
