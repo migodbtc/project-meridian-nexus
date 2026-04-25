@@ -1,7 +1,7 @@
 import { MessageSquare } from "lucide-react";
 import { createClient } from "@/utils/supabase/server"; 
-import { Database } from "../../../../../../../supabase/types/supabase";
 import FeedbackForm from "./_components/FeedbackForm";
+import { Database } from "../../../../../../supabase/types/supabase";
 
 const ALLOWED_EMAILS = ["sgpurificacion@dbtcmandaluyong.one-bosco.org", "mjdmbunda@dbtcmandaluyong.one-bosco.org"];
 
