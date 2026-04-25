@@ -8,6 +8,7 @@ import {
   Package,
   ShieldCheck,
   FileText,
+  User,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -29,7 +30,10 @@ export default function SupportPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-lg font-semibold text-slate-800">Support</h2>
+        <h2 className="text-lg font-semibold text-slate-800 flex flex-row gap-2">
+          <User size={24} className="text-[#3B4FBF]" />
+          Support
+        </h2>
         <p className="mt-1 text-sm text-slate-500">
           Help, references, and project context.
         </p>
@@ -106,6 +110,32 @@ export default function SupportPage() {
             >
               here
             </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-sm flex flex-col gap-2">
+        <h3 className="font-semibold text-slate-800">Special Thanks</h3>
+        <p className="w-full text-slate-700 mb-2">
+          I would to acknowledge the names before for their varying
+          contributions to the project
+        </p>
+        <div className="w-full grid grid-cols-2 gap-2">
+          <div className="w-full flex flex-row gap-2">
+            <User size={20} />
+            Sebastian Purificacion
+          </div>
+          <div className="w-full text-slate-500">
+            Quality assurance and feedback, non-technical/development team but
+            is generous with feedback.
+          </div>
+          <div className="w-full flex flex-row gap-2">
+            <User size={20} />
+            Lance Kennedy Nafarrete
+          </div>
+          <div className="w-full text-slate-500">
+            Quality assurance and feedback, non-technical/development team but
+            is generous with feedback.
           </div>
         </div>
       </div>
