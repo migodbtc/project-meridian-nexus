@@ -45,6 +45,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Supabase types
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          mkdir -p supabase/types
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript --project-id "cwtlbcvssdqdhqdrpoba" --schema public > supabase/types/supabase.ts
+
       - name: Typecheck
         run: pnpm tsc --noEmit
 
