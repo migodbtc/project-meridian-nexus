@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Mail, Phone, MessageSquare, Users, Code, Share2 } from "lucide-react";
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="border-t-0 bg-linear-to-t from-black/20 to-[#0F1117]">
@@ -92,7 +93,7 @@ export default function Footer() {
         {/* Bottom section */}
         <div className="flex justify-between items-center">
           <p className="text-xs text-slate-500">
-            &copy; {currentYear} Communeye Software. All rights reserved.
+            &copy; {CURRENT_YEAR} Communeye Software. All rights reserved.
           </p>
           <div className="flex gap-4 text-xs text-slate-500">
             <Link href="#" className="hover:text-slate-300 transition-colors">
