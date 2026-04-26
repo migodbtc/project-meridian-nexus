@@ -1,79 +1,57 @@
-import { MessageSquare } from "lucide-react";
-import { createClient } from "@/utils/supabase/server"; 
-import FeedbackForm from "./_components/FeedbackForm";
-import { Database } from "../../../../../../supabase/types/supabase";
+import { Suspense } from "react";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-const ALLOWED_EMAILS = ["sgpurificacion@dbtcmandaluyong.one-bosco.org", "mjdmbunda@dbtcmandaluyong.one-bosco.org"];
+const ALLOWED_EMAILS = [
+  "sgpurificacion@dbtcmandaluyong.one-bosco.org",
+  "mjdmbunda@dbtcmandaluyong.one-bosco.org",
+];
 
 /**
- * FeedbackPage Component
- * A server component acting as an authenticated gate for user feedback submission.
- * Validates the user's email against an allowed list before rendering the FeedbackForm.
- * Includes a server action to securely insert feedback directly into the database.
+ * Authenticates user email against whitelist and redirects to feedback form.
+ * Displays error message if email not authorized.
+ * Prevents unauthorized access to feedback submission route.
  */
-export default async function FeedbackPage() {
+async function AuthGateRedirect() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // Authentication Gate
+  // Validate authenticated user against allowed email list.
   if (!user || !user.email || !ALLOWED_EMAILS.includes(user.email)) {
     return (
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold text-slate-800 flex flex-row gap-2 items-center">
-          <MessageSquare size={24} className="text-[#3B4FBF]" />
-          Feedback
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Sorry! Your email address is not authorized to give feedback to the system.
+        <p className="text-sm text-rose-500 font-medium">
+          Sorry! Your email address is not authorized to give feedback to the
+          system.
         </p>
       </div>
     );
   }
 
-  // Actions
-  async function submitFeedbackAction(prevState: any, formData: FormData) {
-    "use server";
-
-    // Security Reverification
-    const supabaseServer = await createClient(); 
-    const { data: { user: actionUser } } = await supabaseServer.auth.getUser();
-
-    // Authenticated user email validation
-    if (!actionUser || !actionUser.email || !ALLOWED_EMAILS.includes(actionUser.email)) {
-      return { success: false, message: "Unauthorized submission attempt." };
-    }
-
-    // Data extraction
-    const topic = formData.get("topic") as string;
-    const subject = formData.get("subject") as string;
-    const message = formData.get("message") as string;
-
-    const payload: Database["public"]["Tables"]["feedback"]["Insert"] = {
-      user_id: actionUser.id,
-      email: actionUser.email,
-      topic,
-      subject,
-      message,
-    };
-
-    try {
-      const { error } = await supabaseServer.from('feedback').insert(payload);
-      
-      if (error) throw error;
-
-      return { success: true, message: "Thank you! Your feedback has been submitted." };
-    } catch (error) {
-      console.error("Feedback submission error:", error);
-      return { success: false, message: "Something went wrong. Please try again." };
-    }
-  }
-
+  // Redirect authorized users to feedback creation page.
+  redirect("/polaris/dash/settings/feedback/create");
   return (
-    <FeedbackForm 
-      user={{ 
-        email: user.email, 
-      }} 
-      submitAction={submitFeedbackAction} 
-    />
+    <div className="space-y-2">
+      <p className="text-sm text-rose-500 font-medium">
+        Redirecting to feedback form...
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Root feedback page with auth gate and redirect logic.
+ * Wraps async auth check in Suspense boundary.
+ * Shows fallback while access verification request resolves.
+ */
+export default function FeedbackRedirectPage() {
+  return (
+    <Suspense
+      fallback={<p className="text-sm text-slate-500">Verifying access...</p>}
+    >
+      <AuthGateRedirect />
+    </Suspense>
   );
 }
