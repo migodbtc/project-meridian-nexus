@@ -45,13 +45,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Supabase types
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          mkdir -p supabase/types
-          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript --project-id "cwtlbcvssdqdhqdrpoba" --schema public > supabase/types/supabase.ts
-
       - name: Typecheck
         run: pnpm tsc --noEmit
 
@@ -139,6 +132,11 @@ jobs:
 
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --debug --db-url "$SUPABASE_DB_URL"
+
+      - name: Apply Supabase type generation (ci branch)
+        run: |
+          set -euo pipefail
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript --local > supabase/types/supabase.ts
 
       - name: Pull Vercel preview environment (ci branch)
         run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
@@ -234,6 +232,12 @@ jobs:
 
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} --version
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --debug --db-url "$SUPABASE_DB_URL"
+
+      - name: Apply Supabase type generation (prod)
+        run: |
+          set -euo pipefail
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript --local > supabase/types/supabase.ts
+
 
       - name: Pull Vercel production environment
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
