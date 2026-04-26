@@ -23,8 +23,8 @@ export interface ProfileRecord {
   province: string | null;
   country: string | null;
   bio: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export type ProfileResponse = ProfileRecord & {
