@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 const ALLOWED_EMAILS = [
   "sgpurificacion@dbtcmandaluyong.one-bosco.org",
   "mjdmbunda@dbtcmandaluyong.one-bosco.org",
+  "lkmnafarrete@dbtcmandaluyong.one-bosco.org",
 ];
 
 /**
