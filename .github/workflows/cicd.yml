@@ -134,9 +134,24 @@ jobs:
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --debug --db-url "$SUPABASE_DB_URL"
 
       - name: Apply Supabase type generation (ci branch)
+        env:
+          SUPABASE_DB_URL: ${{ env.SUPABASE_PROD_SESSION_POOLER }}
+          SUPABASE_ID: ${{ secrets.SUPABASE_PROD_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
-          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript --local > supabase/types/supabase.ts
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            if [ -n "${SUPABASE_ID:-}" ] && [ -n "${SUPABASE_DB_PASSWORD:-}" ]; then
+              SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
+            else
+              echo "SUPABASE_PROD_SESSION_POOLER is empty and fallback SUPABASE_ID/SUPABASE_DB_PASSWORD is missing. Skipping type generation."
+              exit 0
+            fi
+          fi
+          mkdir -p supabase/types
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript \
+            --db-url "$SUPABASE_DB_URL" --schema public \
+            > supabase/types/supabase.ts
 
       - name: Pull Vercel preview environment (ci branch)
         run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
@@ -234,9 +249,24 @@ jobs:
           pnpm dlx supabase@${SUPABASE_CLI_VERSION} migration up --debug --db-url "$SUPABASE_DB_URL"
 
       - name: Apply Supabase type generation (prod)
+        env:
+          SUPABASE_DB_URL: ${{ env.SUPABASE_PROD_SESSION_POOLER }}
+          SUPABASE_ID: ${{ secrets.SUPABASE_PROD_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
           set -euo pipefail
-          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript --local > supabase/types/supabase.ts
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            if [ -n "${SUPABASE_ID:-}" ] && [ -n "${SUPABASE_DB_PASSWORD:-}" ]; then
+              SUPABASE_DB_URL="postgresql://postgres.${SUPABASE_ID}:${SUPABASE_DB_PASSWORD}@${SUPABASE_POOLER_HOST}/postgres"
+            else
+              echo "::error::SUPABASE_PROD_SESSION_POOLER is empty and fallback SUPABASE_ID/SUPABASE_DB_PASSWORD is missing."
+              exit 1
+            fi
+          fi
+          mkdir -p supabase/types
+          pnpm dlx supabase@${SUPABASE_CLI_VERSION} gen types typescript \
+            --db-url "$SUPABASE_DB_URL" --schema public \
+            > supabase/types/supabase.ts
 
 
       - name: Pull Vercel production environment
