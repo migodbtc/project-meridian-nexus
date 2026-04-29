@@ -2,15 +2,42 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users2,
+  Building2,
+  Wrench,
+  Clock,
+  DollarSign,
+  Shield,
+  User,
+} from "lucide-react";
 import { useSidebar } from "@/components/SidebarContext";
 
 const navItems = [
   { href: "/polaris/dash/overview", label: "Overview", icon: LayoutDashboard },
+  { href: "/polaris/dash/talents", label: "Talents", icon: Users2 },
+  { href: "/polaris/dash/clients", label: "Clients", icon: Building2 },
+  {
+    href: "/polaris/dash/operations",
+    label: "Operations",
+    icon: Wrench,
+  },
+  { href: "/polaris/dash/sessions", label: "Sessions", icon: Clock },
+  { href: "/polaris/dash/finances", label: "Finances", icon: DollarSign },
 ];
 
 const bottomNavItems = [
-  { href: "/polaris/dash/settings", label: "Settings", icon: Settings },
+  {
+    href: "/polaris/dash/settings/admin",
+    label: "Admin Settings",
+    icon: Shield,
+  },
+  {
+    href: "/polaris/dash/settings",
+    label: "Personal Settings",
+    icon: User,
+  },
 ];
 
 export default function SidebarNavigation() {
