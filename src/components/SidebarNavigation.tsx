@@ -29,7 +29,7 @@ const navItems = [
 
 const bottomNavItems = [
   {
-    href: "/polaris/dash/settings/admin",
+    href: "/polaris/dash/adsettings",
     label: "Admin Settings",
     icon: Shield,
   },
