@@ -5,74 +5,72 @@ import {
   ArrowDownAZ,
   ArrowDownWideNarrow,
   ArrowUpAZ,
-  ArrowUpWideNarrow,
   ChevronLeft,
   ChevronRight,
   Search,
   UserPlus,
 } from "lucide-react";
 
-type Talent = {
+type Client = {
   id: string;
   name: string;
-  role: string;
+  industry: string;
   location: string;
-  status: "Available" | "Engaged" | "Paused";
-  rate: string;
+  tier: "Core" | "Growth" | "Enterprise";
+  monthlySpend: string;
   activeContracts: number;
   nextRenewal: string;
-  primarySkill: string;
-  lastEngaged: string;
+  accountOwner: string;
 };
 
 type SortKey =
   | "name"
-  | "role"
+  | "industry"
   | "location"
-  | "status"
-  | "rate"
+  | "tier"
+  | "monthlySpend"
   | "activeContracts"
   | "nextRenewal"
-  | "lastEngaged";
+  | "accountOwner";
 
 type SortDirection = "asc" | "desc";
 
-type TalentDirectoryClientProps = {
-  talents: Talent[];
+type ClientDirectoryClientProps = {
+  clients: Client[];
 };
 
 const PAGE_SIZE = 10;
 
-export default function TalentDirectoryClient({
-  talents,
-}: TalentDirectoryClientProps) {
+export default function ClientDirectoryClient({
+  clients,
+}: ClientDirectoryClientProps) {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
-  const filteredTalents = useMemo(() => {
+  const filteredClients = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) {
-      return talents;
+      return clients;
     }
-    return talents.filter((talent) => {
+    return clients.filter((client) => {
       const haystack = [
-        talent.name,
-        talent.role,
-        talent.location,
-        talent.status,
-        talent.primarySkill,
+        client.name,
+        client.industry,
+        client.location,
+        client.tier,
+        client.accountOwner,
       ]
         .join(" ")
         .toLowerCase();
       return haystack.includes(normalized);
     });
-  }, [query, talents]);
+  }, [clients, query]);
 
-  const sortedTalents = useMemo(() => {
-    const copy = [...filteredTalents];
+  const sortedClients = useMemo(() => {
+    const copy = [...filteredClients];
     copy.sort((a, b) => {
       const aValue = a[sortKey];
       const bValue = b[sortKey];
@@ -90,12 +88,12 @@ export default function TalentDirectoryClient({
       return 0;
     });
     return copy;
-  }, [filteredTalents, sortDirection, sortKey]);
+  }, [filteredClients, sortDirection, sortKey]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedTalents.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(sortedClients.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentRows = sortedTalents.slice(startIndex, startIndex + PAGE_SIZE);
+  const currentRows = sortedClients.slice(startIndex, startIndex + PAGE_SIZE);
 
   const toggleSort = (key: SortKey) => {
     if (key === sortKey) {
@@ -106,7 +104,7 @@ export default function TalentDirectoryClient({
     setSortDirection("asc");
   };
 
-  const toggleMultiSelection = (id: string) => {
+  const toggleSelection = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -146,8 +144,8 @@ export default function TalentDirectoryClient({
 
   const paginationLabel = `${startIndex + 1}-${Math.min(
     startIndex + PAGE_SIZE,
-    sortedTalents.length,
-  )} of ${sortedTalents.length}`;
+    sortedClients.length,
+  )} of ${sortedClients.length}`;
 
   return (
     <section className="mt-6 rounded-2xl border border-slate-300 bg-white p-6">
@@ -161,7 +159,7 @@ export default function TalentDirectoryClient({
                 setQuery(event.target.value);
                 setPage(1);
               }}
-              placeholder="Search by name, role, skill, or location"
+              placeholder="Search by client, owner, tier, or industry"
               className="w-full bg-transparent text-slate-700 placeholder:text-slate-500 focus:outline-none"
             />
           </label>
@@ -171,7 +169,7 @@ export default function TalentDirectoryClient({
           className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
           <UserPlus className="h-4 w-4" />
-          Onboard talent
+          Add client
         </button>
       </div>
 
@@ -194,18 +192,18 @@ export default function TalentDirectoryClient({
                   onClick={() => toggleSort("name")}
                   className="flex items-center gap-2"
                 >
-                  Name
+                  Client
                   {sortIcon("name")}
                 </button>
               </th>
               <th className="px-4 py-3">
                 <button
                   type="button"
-                  onClick={() => toggleSort("role")}
+                  onClick={() => toggleSort("industry")}
                   className="flex items-center gap-2"
                 >
-                  Role
-                  {sortIcon("role")}
+                  Industry
+                  {sortIcon("industry")}
                 </button>
               </th>
               <th className="px-4 py-3">
@@ -221,11 +219,11 @@ export default function TalentDirectoryClient({
               <th className="px-4 py-3">
                 <button
                   type="button"
-                  onClick={() => toggleSort("status")}
+                  onClick={() => toggleSort("tier")}
                   className="flex items-center gap-2"
                 >
-                  Status
-                  {sortIcon("status")}
+                  Tier
+                  {sortIcon("tier")}
                 </button>
               </th>
               <th className="px-4 py-3">
@@ -251,31 +249,31 @@ export default function TalentDirectoryClient({
               <th className="px-4 py-3">
                 <button
                   type="button"
-                  onClick={() => toggleSort("rate")}
+                  onClick={() => toggleSort("monthlySpend")}
                   className="flex items-center gap-2"
                 >
-                  Rate
-                  {sortIcon("rate")}
+                  MRR
+                  {sortIcon("monthlySpend")}
                 </button>
               </th>
               <th className="px-4 py-3">
                 <button
                   type="button"
-                  onClick={() => toggleSort("lastEngaged")}
+                  onClick={() => toggleSort("accountOwner")}
                   className="flex items-center gap-2"
                 >
-                  Last engaged
-                  {sortIcon("lastEngaged")}
+                  Account owner
+                  {sortIcon("accountOwner")}
                 </button>
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 text-slate-700">
-            {currentRows.map((talent) => {
-              const isSelected = selectedIds.has(talent.id);
+            {currentRows.map((client) => {
+              const isSelected = selectedIds.has(client.id);
               return (
                 <tr
-                  key={talent.id}
+                  key={client.id}
                   className={`transition ${
                     isSelected ? "bg-slate-50" : "hover:bg-slate-50/60"
                   }`}
@@ -283,36 +281,36 @@ export default function TalentDirectoryClient({
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
-                      aria-label={`Select ${talent.name}`}
+                      aria-label={`Select ${client.name}`}
                       checked={isSelected}
-                      onChange={() => toggleMultiSelection(talent.id)}
+                      onChange={() => toggleSelection(client.id)}
                       className="h-4 w-4 rounded border-slate-300 text-slate-900"
                     />
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-semibold text-slate-900">
-                      {talent.name}
+                      {client.name}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {talent.primarySkill}
+                      {client.accountOwner}
                     </div>
                   </td>
-                  <td className="px-4 py-3">{talent.role}</td>
-                  <td className="px-4 py-3">{talent.location}</td>
+                  <td className="px-4 py-3">{client.industry}</td>
+                  <td className="px-4 py-3">{client.location}</td>
                   <td className="px-4 py-3">
                     <span className="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600">
-                      {talent.status}
+                      {client.tier}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-semibold text-slate-900">
-                      {talent.activeContracts}
+                      {client.activeContracts}
                     </div>
                     <div className="text-xs text-slate-500">Active</div>
                   </td>
-                  <td className="px-4 py-3">{talent.nextRenewal}</td>
-                  <td className="px-4 py-3">{talent.rate}</td>
-                  <td className="px-4 py-3">{talent.lastEngaged}</td>
+                  <td className="px-4 py-3">{client.nextRenewal}</td>
+                  <td className="px-4 py-3">{client.monthlySpend}</td>
+                  <td className="px-4 py-3">{client.accountOwner}</td>
                 </tr>
               );
             })}
