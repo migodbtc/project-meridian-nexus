@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function DashPage() {
-  redirect("/polaris/dash/overview");
+  redirect("/polaris/dash/talents");
 }

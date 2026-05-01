@@ -15,24 +15,10 @@ import {
 import { useSidebar } from "@/components/SidebarContext";
 
 const navItems = [
-  { href: "/polaris/dash/overview", label: "Overview", icon: LayoutDashboard },
   { href: "/polaris/dash/talents", label: "Talents", icon: Users2 },
-  { href: "/polaris/dash/clients", label: "Clients", icon: Building2 },
-  {
-    href: "/polaris/dash/operations",
-    label: "Operations",
-    icon: Wrench,
-  },
-  { href: "/polaris/dash/sessions", label: "Sessions", icon: Clock },
-  { href: "/polaris/dash/finances", label: "Finances", icon: DollarSign },
 ];
 
 const bottomNavItems = [
-  {
-    href: "/polaris/dash/adsettings",
-    label: "Admin Settings",
-    icon: Shield,
-  },
   {
     href: "/polaris/dash/settings",
     label: "Personal Settings",
