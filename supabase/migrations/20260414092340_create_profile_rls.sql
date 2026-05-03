@@ -15,44 +15,35 @@ returns user_role as $$
   select role from profiles where id = auth.uid();
 $$ language sql security definer stable;
 
--- 1. Users can read their own profile (all authenticated users, including guests)
-create policy "self: read own profile"
+-- Generic CRUD policies: all vs own data access.
+-- SELECT: everyone reads own; admin/superadmin/operations/finance read all.
+create policy "read: own profile"
 on profiles for select
 using (id = auth.uid());
 
--- 2. Users can update their own profile but cannot change their role
-create policy "self: update own profile"
+create policy "read: all profiles (admin/ops/finance)"
+on profiles for select
+using (
+  get_my_role() in ('admin', 'superadmin', 'operations', 'finance')
+);
+
+-- INSERT: users can backfill their own profile as guest.
+create policy "create: own profile as guest"
+on profiles for insert
+with check (id = auth.uid() and role = 'guest'::user_role);
+
+-- UPDATE: everyone updates their own (with role preservation); admin updates any.
+create policy "update: own profile"
 on profiles for update
 using (id = auth.uid())
 with check (role = get_my_role());
 
--- 3. Users can recreate their own missing profile row as guest (backfill for legacy accounts)
-create policy "self: insert own profile"
-on profiles for insert
-with check (id = auth.uid() and role = 'guest'::user_role);
+create policy "update: all profiles (admin)"
+on profiles for update
+using (get_my_role() in ('admin', 'superadmin'))
+with check (get_my_role() in ('admin', 'superadmin'));
 
--- 4. Operations and finance can read profiles at or below their level
-create policy "ops_finance: read same and below"
-on profiles for select
-using (
-  get_my_role() in ('operations', 'finance')
-  and role <= get_my_role()
-  and id != auth.uid()
-);
-
--- 5. Admin can read everyone except superadmin
-create policy "admin: read below superadmin"
-on profiles for select
-using (get_my_role() = 'admin' and role < 'superadmin'::user_role);
-
--- 6. Admin can update/delete anyone strictly below them
-create policy "admin: write below admin"
-on profiles for all
-using (get_my_role() = 'admin' and role < 'admin'::user_role and id != auth.uid())
-with check (role < 'admin'::user_role);
-
--- 7. Superadmin can do everything
-create policy "superadmin: full access"
-on profiles for all
-using (get_my_role() = 'superadmin')
-with check (get_my_role() = 'superadmin');
+-- DELETE: admin/superadmin only.
+create policy "delete: profiles (admin/superadmin)"
+on profiles for delete
+using (get_my_role() in ('admin', 'superadmin'));
