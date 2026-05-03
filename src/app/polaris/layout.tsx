@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Polaris Engine",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function PolarisLayout({

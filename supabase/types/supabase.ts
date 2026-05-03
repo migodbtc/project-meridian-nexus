@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       feedback: {
@@ -104,6 +129,80 @@ export type Database = {
         }
         Relationships: []
       }
+      talents: {
+        Row: {
+          availability: string | null
+          bio: string | null
+          created_at: string
+          currency: string | null
+          display_name: string
+          headline: string | null
+          hourly_rate: number | null
+          id: string
+          is_verified: boolean
+          location: string | null
+          offboarded_at: string | null
+          onboarded_at: string | null
+          primary_role: string | null
+          profile_id: string | null
+          skills: string[]
+          status: Database["public"]["Enums"]["talent_status"]
+          timezone: string
+          updated_at: string
+          years_experience: number | null
+        }
+        Insert: {
+          availability?: string | null
+          bio?: string | null
+          created_at?: string
+          currency?: string | null
+          display_name: string
+          headline?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_verified?: boolean
+          location?: string | null
+          offboarded_at?: string | null
+          onboarded_at?: string | null
+          primary_role?: string | null
+          profile_id?: string | null
+          skills?: string[]
+          status?: Database["public"]["Enums"]["talent_status"]
+          timezone?: string
+          updated_at?: string
+          years_experience?: number | null
+        }
+        Update: {
+          availability?: string | null
+          bio?: string | null
+          created_at?: string
+          currency?: string | null
+          display_name?: string
+          headline?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_verified?: boolean
+          location?: string | null
+          offboarded_at?: string | null
+          onboarded_at?: string | null
+          primary_role?: string | null
+          profile_id?: string | null
+          skills?: string[]
+          status?: Database["public"]["Enums"]["talent_status"]
+          timezone?: string
+          updated_at?: string
+          years_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talents_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -130,6 +229,7 @@ export type Database = {
         | "RN"
         | "CPA"
         | "Esq."
+      talent_status: "onboarding" | "active" | "paused" | "offboarded"
       user_role:
         | "guest"
         | "talent"
@@ -263,6 +363,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       name_suffix: [
@@ -281,6 +384,7 @@ export const Constants = {
         "CPA",
         "Esq.",
       ],
+      talent_status: ["onboarding", "active", "paused", "offboarded"],
       user_role: [
         "guest",
         "talent",
