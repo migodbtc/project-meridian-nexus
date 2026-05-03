@@ -21,10 +21,10 @@ create policy "read: own profile"
 on profiles for select
 using (id = auth.uid());
 
-create policy "read: all profiles (admin/ops/finance)"
+create policy "read: all profiles (admin/superadmin)"
 on profiles for select
 using (
-  get_my_role() in ('admin', 'superadmin', 'operations', 'finance')
+  get_my_role() in ('admin', 'superadmin')
 );
 
 -- INSERT: users can backfill their own profile as guest.
@@ -38,7 +38,7 @@ on profiles for update
 using (id = auth.uid())
 with check (role = get_my_role());
 
-create policy "update: all profiles (admin)"
+create policy "update: all profiles (admin/superadmin)"
 on profiles for update
 using (get_my_role() in ('admin', 'superadmin'))
 with check (get_my_role() in ('admin', 'superadmin'));
