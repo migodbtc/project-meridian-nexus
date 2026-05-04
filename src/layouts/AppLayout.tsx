@@ -129,7 +129,7 @@ export default function AppLayout({
             </div>
           </header>
 
-          <main className="p-4 md:p-6 overflow-y-auto h-[calc(100vh-5rem)]">
+          <main className="overflow-y-auto h-[calc(100vh-5rem)]">
             {children}
           </main>
         </div>
