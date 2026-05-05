@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import RouteChrome from "@/components/RouteChrome";
 
@@ -31,7 +32,9 @@ export default function RootLayout({
       style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full flex flex-col">
-        <RouteChrome>{children}</RouteChrome>
+        <Suspense fallback={null}>
+          <RouteChrome>{children}</RouteChrome>
+        </Suspense>
       </body>
     </html>
   );

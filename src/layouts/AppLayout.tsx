@@ -70,7 +70,7 @@ export default function AppLayout({
         <SidebarNavigation />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="z-10 flex h-20 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6">
+          <header className="z-10 flex h-20 items-center justify-between border-b border-slate-300 bg-white px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -105,7 +105,7 @@ export default function AppLayout({
                 </button>
 
                 {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-lg border border-slate-200 bg-white shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-48 rounded-lg border border-slate-300 bg-white shadow-lg z-50">
                     <button
                       type="button"
                       onClick={handleProfileClick}
@@ -118,7 +118,7 @@ export default function AppLayout({
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2 last:rounded-b-lg border-t border-slate-200 hover:cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2 last:rounded-b-lg border-t border-slate-300 hover:cursor-pointer"
                     >
                       <LogOut size={16} />
                       {logoutPending ? "Logging Out..." : "Log Out"}
