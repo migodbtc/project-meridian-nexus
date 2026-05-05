@@ -1,5 +1,9 @@
 project_id = "abqrsruyazngqsillxps"
 
+[db.seed]
+enabled = true
+sql_paths = ['seeds/*.sql']
+
 [auth.email.template.confirmation]
 subject = "Confirm your signup to POLARIS"
 content_path = "supabase/templates/confirmation.html"
