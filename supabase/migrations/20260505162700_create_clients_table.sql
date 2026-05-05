@@ -15,8 +15,8 @@
  *   via ALTER TYPE without touching this file.
  * - The nullable `profile_id` allows clients without accounts to be onboarded first
  *   and linked later without requiring a schema change.
- * - The `assigned_talent_id` is a soft-link kept here for quick lookups; a junction
- *   table for multi-talent clients can be added in a later migration without conflict.
+ * - Talent-to-client relationships are now exclusively managed via the contracts table.
+ *   This eliminates redundancy and ensures all collaborations are contractually tracked.
  */
 
 ---! Guard: profiles table must exist (get_my_role() + profile_id FK) !---
@@ -47,7 +47,6 @@ create type client_type as enum (
 create table public.clients (
 	id                uuid          primary key default gen_random_uuid(),
 	profile_id        uuid          references public.profiles(id) on delete set null,
-	assigned_talent_id uuid         references public.talents(id) on delete set null,
 	status            client_status not null default 'pending',
 	type              client_type   not null default 'individual',
 
@@ -82,7 +81,6 @@ create table public.clients (
 create unique index clients_profile_id_key on public.clients(profile_id)
 	where profile_id is not null;
 create index clients_status_idx      on public.clients(status);
-create index clients_talent_idx      on public.clients(assigned_talent_id);
 
 ---! Triggers !---
 create trigger clients_updated_at
@@ -92,7 +90,6 @@ for each row execute procedure set_updated_at();
 ---! Table + Column Documentation/Commenting !---
 comment on table  public.clients                      is 'Stores client profiles that commission contracts within the Polaris system.';
 comment on column public.clients.profile_id           is 'Optional link to an authenticated user profile (external_client role). Null for unlinked/admin-managed clients.';
-comment on column public.clients.assigned_talent_id   is 'Primary assigned talent. Multi-talent assignments are handled by a future junction table.';
 comment on column public.clients.status               is 'Client lifecycle state: pending, active, inactive, archived.';
 comment on column public.clients.type                 is 'Client kind: individual (person-to-person) or company (person-to-company). Determines whether company_name is required.';
 comment on column public.clients.display_name         is 'Primary display name used across client listings and contract views.';

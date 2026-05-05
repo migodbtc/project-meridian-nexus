@@ -60,22 +60,14 @@ using (
 	)
 );
 
--- SELECT: client reads vaults for contracts they are assigned to or linked to
+-- SELECT: client reads vaults for contracts they are party to
 create policy "read: own client contract vaults"
 on public.contract_vaults for select
 to authenticated
 using (
 	contract_id in (
 		select id from public.contracts
-		where 
-			-- Client is directly linked to the contract
-			client_id = (select id from public.clients where profile_id = auth.uid())
-			or
-			-- Talent in contract is assigned to a client with this user's profile
-			talent_id in (
-				select assigned_talent_id from public.clients
-				where profile_id = auth.uid() and assigned_talent_id is not null
-			)
+		where client_id = (select id from public.clients where profile_id = auth.uid())
 	)
 );
 
@@ -128,7 +120,7 @@ using (
 	)
 );
 
--- SELECT: client reads files in vaults for contracts they are assigned to or linked to
+-- SELECT: client reads files in vaults for contracts they are party to
 create policy "read: own client vault files"
 on public.vault_files for select
 to authenticated
@@ -137,13 +129,7 @@ using (
 		select id from public.contract_vaults
 		where contract_id in (
 			select id from public.contracts
-			where 
-				client_id = (select id from public.clients where profile_id = auth.uid())
-				or
-				talent_id in (
-					select assigned_talent_id from public.clients
-					where profile_id = auth.uid() and assigned_talent_id is not null
-				)
+			where client_id = (select id from public.clients where profile_id = auth.uid())
 		)
 	)
 );

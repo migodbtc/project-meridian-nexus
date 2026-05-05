@@ -38,20 +38,12 @@ using (
 	talent_id = (select id from public.talents where profile_id = auth.uid())
 );
 
--- SELECT: client reads contracts they are party to (via their assigned talent link or client profile link)
--- A client can see a contract if:
---   1. The contract's client_id matches a client record where profile_id = auth.uid(), OR
---   2. The contract's talent_id is assigned to a client where profile_id = auth.uid()
+-- SELECT: client reads contracts they are party to
 create policy "read: own client contracts"
 on public.contracts for select
 to authenticated
 using (
 	client_id = (select id from public.clients where profile_id = auth.uid())
-	or
-	talent_id in (
-		select assigned_talent_id from public.clients
-		where profile_id = auth.uid() and assigned_talent_id is not null
-	)
 );
 
 -- SELECT: admin/superadmin read all contracts
