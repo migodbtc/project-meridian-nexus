@@ -81,7 +81,7 @@ insert into public.clients (
 
 -- [007] unlinked — company, inactive, no talent assigned
 ('c0000000-0000-0000-0000-000000000007',
- null,null,
+ null,
  'inactive','company',
  'RedPeak Ventures','RedPeak Ventures LLC',
  'hello@redpeakventures.com','+12025551234',
@@ -108,7 +108,7 @@ insert into public.clients (
 
 -- [010] unlinked — company, archived, no talent assigned, short notes
 ('c0000000-0000-0000-0000-00000000000a',
- null,null,
+ null,
  'archived','company',
  'Silverstone Corp.','Silverstone Corp.',
  'info@silverstone.com.ph','+63289004321',
@@ -126,7 +126,7 @@ insert into public.clients (
 
 -- [012] unlinked — individual, inactive, no phone, no notes
 ('c0000000-0000-0000-0000-00000000000c',
- null,null,
+ null,
  'inactive','individual',
  'Sandra Park',null,
  'sandra.park@corp.kr',null,
