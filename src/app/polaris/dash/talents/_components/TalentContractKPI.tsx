@@ -60,7 +60,11 @@ function TalentContractKPIClient({
               margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+              <Bar
+                dataKey="count"
+                radius={[8, 8, 0, 0]}
+                label={{ position: "top" }}
+              >
                 {contractStatusData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
@@ -101,7 +105,7 @@ function TalentContractKPIClient({
               <Users size={14} />
               Signed Talents
             </label>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-lg font-bold text-blue-600">
               {signedTalents}
             </div>
           </div>
@@ -112,7 +116,7 @@ function TalentContractKPIClient({
               <CheckCircle2 size={14} />
               Finished Contracts
             </label>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-lg font-bold text-orange-600">
               {finishedContractTalents}
             </div>
           </div>

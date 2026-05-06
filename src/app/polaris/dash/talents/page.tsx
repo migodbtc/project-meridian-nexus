@@ -3,6 +3,7 @@ import {
   TalentHubPageClient,
   type SearchParams,
 } from "./_components/TalentHubPageClient";
+import { AppSuspense } from "@/components/AppSuspense";
 
 /**
  * RSC entry point for the Talents Hub route (`/polaris/dash/talents`).
@@ -15,7 +16,7 @@ import {
  */
 export default function TalentHubPage(props: { searchParams: SearchParams }) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<AppSuspense />}>
       <TalentHubPageClient searchParams={props.searchParams} />
     </Suspense>
   );

@@ -116,7 +116,7 @@ export function TalentKPIOnboardOffboard() {
               <Users size={14} className="" />
               Total Active
             </label>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-lg font-bold text-gray-900">
               {stats.totalActive}
             </div>
           </div>
@@ -127,7 +127,7 @@ export function TalentKPIOnboardOffboard() {
               <TrendingUp size={14} className="" />
               Onboarded This Month
             </label>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-lg font-bold text-blue-600">
               {stats.onboardedThisMonth}
             </div>
           </div>
@@ -138,7 +138,7 @@ export function TalentKPIOnboardOffboard() {
               <TrendingUp size={14} className="rotate-180" />
               Offboarded This Month
             </label>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-lg font-bold text-red-600">
               {stats.offboardedThisMonth}
             </div>
           </div>
