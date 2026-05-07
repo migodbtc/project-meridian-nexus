@@ -265,6 +265,10 @@ export function TalentIndex({
     router.push(`?${params.toString()}`);
   };
 
+  const handleOnboardRedirect = () => {
+    router.push("/polaris/dash/talents/onboarding");
+  };
+
   return (
     <>
       <label className="w-full text-xs font-semibold text-gray-700 uppercase flex items-center gap-1 pt-4">
@@ -309,7 +313,10 @@ export function TalentIndex({
           />
         </div>
 
-        <button className="h-10 px-4 bg-[#2F3FA0] text-white rounded-lg font-semibold text-sm flex items-center gap-2 hover:cursor-pointer hover:bg-[#4A5FBF] transition">
+        <button
+          className="h-10 px-4 bg-[#2F3FA0] text-white rounded-lg font-semibold text-sm flex items-center gap-2 hover:cursor-pointer hover:bg-[#4A5FBF] transition"
+          onClick={handleOnboardRedirect}
+        >
           <Plus size={16} />
           ONBOARD
         </button>

@@ -211,6 +211,7 @@ async function getUniqueLocations(): Promise<string[]> {
 // POST talent (onboarding)
 async function postNewTalent() {
   // basic flow: parse payload, create talent, if success, create auth + profile
+  // basing off my previous work, per page navigation validation should happen
   const supabase = await createClient();
 
   //
