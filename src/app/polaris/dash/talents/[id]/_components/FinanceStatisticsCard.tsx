@@ -2,6 +2,18 @@
 
 import { DollarSign, AlertCircle } from "lucide-react";
 
+/**
+ * Placeholder card for finance statistics (WIP).
+ *
+ * Currently displays a "Coming Soon" empty state.
+ * Will eventually render:
+ * - Total earnings
+ * - Monthly revenue trends
+ * - Contract revenue breakdown
+ * - Payment history
+ *
+ * @returns Work-in-progress finance statistics card component
+ */
 export function FinanceStatisticsCard() {
   return (
     <div className="flex flex-col gap-1">

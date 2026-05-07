@@ -1,6 +1,14 @@
 "use client";
 
-import { User, UserCircle2, BookOpen, Badge } from "lucide-react";
+import {
+  User,
+  UserCircle2,
+  BookOpen,
+  Badge,
+  SquarePen,
+  Trash,
+  DoorOpen,
+} from "lucide-react";
 import { Tables } from "@/supabase/types/supabase";
 
 type Talent = Tables<"talents">;
@@ -11,6 +19,19 @@ interface PersonalInformationCardProps {
   profile: Profile;
 }
 
+/**
+ * Displays talent's personal information card.
+ *
+ * Renders:
+ * - Avatar + talent role badge
+ * - Full name (from profile + talent record)
+ * - Headline & biography
+ * - Additional metadata (skills, certifications, etc.)
+ *
+ * @param props.talent - Talent record containing headline, display name, bio, verification status
+ * @param props.profile - Profile record containing first name, middle name, last name, suffix
+ * @returns Personal information card component
+ */
 export function PersonalInformationCard({
   talent,
   profile,
@@ -44,6 +65,20 @@ export function PersonalInformationCard({
               <BookOpen size={16} className="mt-0.5 shrink-0 text-slate-500" />
               <span>{talent.bio || "No biography added"}</span>
             </p>
+          </div>
+          <div className="w-8 flex flex-col space-y-2 text-center">
+            <button
+              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer"
+              title="Edit talent"
+            >
+              <SquarePen size={16} />
+            </button>
+            <button
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+              title="Offboard talent"
+            >
+              <DoorOpen size={16} />
+            </button>
           </div>
         </div>
         <div className="w-full border-t border-slate-200 pt-6">

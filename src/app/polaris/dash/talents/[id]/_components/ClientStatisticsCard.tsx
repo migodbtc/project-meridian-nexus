@@ -20,6 +20,15 @@ interface ClientStatisticsCardProps {
   clientStats?: ClientStatisticsData;
 }
 
+/**
+ * Displays client relationship and contract statistics for a talent.
+ *
+ * Left panel: pie chart showing contract status breakdown (DRAFT, FINALIZED, APPROVED, CANCELED)
+ * Right panel: three stat rows — active clients, active contracts, average rating
+ *
+ * @param props.clientStats - Pre-computed client stats from server (active clients, contracts, rating, status data)
+ * @returns Card component with contract status chart and client statistics
+ */
 export function ClientStatisticsCard({
   clientStats,
 }: ClientStatisticsCardProps) {

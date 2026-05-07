@@ -22,6 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  DoorOpen,
 } from "lucide-react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -138,21 +139,14 @@ function TalentTableRow({ talent }: { talent: TalentRow }) {
           className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer"
           title="View"
           href={`/polaris/dash/talents/${talent.id}`}
-          
         >
           <Eye size={16} />
         </Link>
         <button
-          className="p-2 text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition cursor-pointer"
-          title="Edit"
-        >
-          <Edit size={16} />
-        </button>
-        <button
           className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
           title="Remove"
         >
-          <Trash2 size={16} />
+          <DoorOpen size={16} />
         </button>
       </div>
     </div>

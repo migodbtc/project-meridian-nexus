@@ -11,18 +11,10 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-
-interface ContractStatusData {
-  status: string;
-  count: number;
-  fill: string;
-}
+import { ContractKPIDataResponse } from "../page";
 
 interface ContractKPIProps {
-  totalContractRevenue: number;
-  signedTalents: number;
-  finishedContractTalents: number;
-  contractStatusData: ContractStatusData[];
+  contractKPIData: ContractKPIDataResponse;
 }
 
 /**
@@ -36,12 +28,7 @@ interface ContractKPIProps {
  * @param props - Pre-computed contract statistics from server
  * @returns Rendered contract KPI card with chart and statistics
  */
-function TalentContractKPIClient({
-  totalContractRevenue,
-  signedTalents,
-  finishedContractTalents,
-  contractStatusData,
-}: ContractKPIProps) {
+function TalentContractKPIClient({ contractKPIData }: ContractKPIProps) {
   return (
     <div>
       {/* KPI Card Label */}
@@ -56,7 +43,7 @@ function TalentContractKPIClient({
         <div className="flex-1 flex flex-col items-center justify-center">
           <ResponsiveContainer width="100%" height={160}>
             <BarChart
-              data={contractStatusData}
+              data={contractKPIData.contractStatusData}
               margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
@@ -65,7 +52,7 @@ function TalentContractKPIClient({
                 radius={[8, 8, 0, 0]}
                 label={{ position: "top" }}
               >
-                {contractStatusData.map((entry, index) => (
+                {contractKPIData.contractStatusData?.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Bar>
@@ -74,7 +61,7 @@ function TalentContractKPIClient({
 
           {/* Color Indicators */}
           <div className="flex flex-row gap-1 flex-wrap justify-center">
-            {contractStatusData.map((item) => (
+            {contractKPIData.contractStatusData?.map((item) => (
               <div key={item.status} className="flex items-center gap-2">
                 <div
                   className="w-3 h-3 rounded-full"
@@ -95,7 +82,7 @@ function TalentContractKPIClient({
               Contract Revenue (Monthly)
             </label>
             <div className="text-3xl font-bold text-green-600">
-              ${totalContractRevenue.toLocaleString()}
+              ${contractKPIData.totalContractRevenue?.toLocaleString()}
             </div>
           </div>
 
@@ -106,7 +93,7 @@ function TalentContractKPIClient({
               Signed Talents
             </label>
             <div className="text-lg font-bold text-blue-600">
-              {signedTalents}
+              {contractKPIData.signedTalents}
             </div>
           </div>
 
@@ -117,7 +104,7 @@ function TalentContractKPIClient({
               Finished Contracts
             </label>
             <div className="text-lg font-bold text-orange-600">
-              {finishedContractTalents}
+              {contractKPIData.finishedContractTalents}
             </div>
           </div>
         </div>

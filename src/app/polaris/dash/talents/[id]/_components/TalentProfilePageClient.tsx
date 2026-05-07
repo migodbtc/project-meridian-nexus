@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Badge, BookOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  Badge,
+  BookOpen,
+  DollarSign,
+  FilePen,
+  User,
+} from "lucide-react";
 import { Tables } from "@/supabase/types/supabase";
 import { PersonalInformationCard } from "./PersonalInformationCard";
 import { ClientStatisticsCard } from "./ClientStatisticsCard";
@@ -45,10 +52,28 @@ function getStatusBadgeStyle(status: string | null) {
   );
 }
 
+/**
+ * Tab panel displaying detailed talent profile information.
+ *
+ * Renders profile fields in a responsive grid:
+ * - Verified status
+ * - Current status (with badge)
+ * - Location & timezone
+ * - Primary role & years of experience
+ * - Hourly rate & availability
+ * - Onboarded/offboarded dates
+ *
+ * @param props.talent - Talent record with profile metadata
+ * @returns Tab panel with profile details grid
+ */
 function TalentProfileTabContent({ talent }: TalentProfileTabContentProps) {
   return (
-    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400">
-      <div className="grid grid-cols-4 gap-x-8 gap-y-5 text-sm">
+    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400 flex flex-col gap-4">
+      <h1 className="text-xl text-slate-700 font-bold transition-colors flex items-center gap-2.5 leading-tight mt-2">
+        <User size={24} />
+        Profile Information
+      </h1>
+      <div className="w-full grid grid-cols-4 gap-x-8 gap-y-5 text-sm">
         {/* Verified */}
         <div className="flex flex-col">
           <span className="text-xs font-semibold uppercase text-slate-500 tracking-wide">
@@ -218,38 +243,57 @@ function TalentProfileTabContent({ talent }: TalentProfileTabContentProps) {
 
 function TalentContractTabContent() {
   return (
-    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400">
-      Talent contract tab content
+    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400 flex flex-col gap-4">
+      <h1 className="text-xl text-slate-700 font-bold transition-colors flex items-center gap-2.5 leading-tight mt-2">
+        <FilePen size={24} />
+        Assigned Contracts
+      </h1>
+      {/* Assigned Contracts Tables */}
+      <div className="">Assigned contracts tables</div>
     </div>
   );
 }
 
 function TalentFinancialsTabContent() {
   return (
-    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400">
-      Talent financial tab content
+    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400 flex flex-col gap-4">
+      <h1 className="text-xl text-slate-700 font-bold transition-colors flex items-center gap-2.5 leading-tight mt-2">
+        <DollarSign size={24} />
+        Talent Financials
+      </h1>
+      {/* Financials data */}
+      <div className="">Assigned contracts tables (WIP)</div>
     </div>
   );
 }
 
 function TalentPerformanceTabContent() {
   return (
-    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400">
-      Talent performance tab content
+    <div className="flex-1 min-h-64 border border-slate-300 bg-white rounded-lg p-4 text-slate-400 flex flex-col gap-4">
+      <h1 className="text-xl text-slate-700 font-bold transition-colors flex items-center gap-2.5 leading-tight mt-2">
+        <DollarSign size={24} />
+        Performance & Sessions
+      </h1>
+      {/* Performance data */}
+      <div className="">Performance data (WIP)</div>
     </div>
   );
 }
 
 /**
- * Client Component shell for the individual Talent Profile page
- * (`/polaris/dash/talents/[id]`).
+ * Client component for the individual Talent Profile view.
  *
- * Receives a fully-resolved talent record from the parent RSC
- * ({@link TalentProfilePage}) — no async data fetching happens here.
- * Owns all interactive UI for the profile view: header details, tabbed
- * sections (bio, skills, history), inline edits, modals, etc.
+ * Displays a tabbed dashboard with multiple sections:
+ * - Top grid: PersonalInformationCard, ClientStatisticsCard, FinanceStatisticsCard
+ * - Tab panels: Profile Info, Assigned Contracts, Financials, Performance & Sessions
  *
- * @param props.talent - The resolved talent record to display
+ * Receives all server-fetched talent, profile, and statistics data as props.
+ * Manages internal tab state; no data fetching occurs here.
+ *
+ * @param props.talent - Talent record from Supabase
+ * @param props.talentProfile - Associated profile record
+ * @param props.clientStats - Optional client relationship and contract stats
+ * @returns Multi-panel talent profile dashboard with tabs
  */
 export function TalentProfilePageClient({
   talent,
