@@ -1,8 +1,18 @@
 "use client";
 
-import { ArrowLeft, LogIn, Minus, Plus, UserPlus } from "lucide-react";
+import { queueFlashToast, showErrorToast, useFlashToast } from "@/utils/toast";
+import {
+  ArrowLeft,
+  LogIn,
+  Minus,
+  Plus,
+  UserPlus,
+  User,
+  Briefcase,
+} from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { OnboardingPayload, storeTalent } from "../page";
 
 // create auth.users: email*, password*
 // create public.profiles: role (talent), first_name*, middle_name, last_name*, suffix, username (unique)*, phone*, birthday, address_list1*, address_list2, city*, province*, country*, bio
@@ -38,7 +48,7 @@ function OnboardingFirstPage() {
           <UserPlus size={20} />
           <span>Talent Onboarding</span>
         </h1>
-        <p className="w-2xl text-justify text-xs text-slate-500 italic tracking-wide flex items-center gap-1.5 mb-4">
+        <p className="w-full break-words text-xs text-slate-500 italic tracking-wide leading-relaxed mb-4">
           To onboard the talent successfully, please filled out the form below.
           All fields are not required with only the inputs with the red asterisk
           are necessary for a successful onboarding. Additional details can be
@@ -47,7 +57,6 @@ function OnboardingFirstPage() {
         <form className="w-full min-h-16 grid grid-cols-3 gap-2 space-y-2">
           <div className="w-full h-fit flex flex-col col-span-3 justify-center items-left">
             <label className="text-md font-semibold text-gray-700 uppercase items-center mt-3 flex flex-row gap-2">
-              <LogIn size={20} />
               User Authentication
             </label>
           </div>
@@ -85,7 +94,6 @@ function OnboardingFirstPage() {
           </div>
           <div className="w-full h-fit flex flex-col col-span-3 justify-center items-left">
             <label className="text-md font-semibold text-gray-700 uppercase items-center  mt-3 flex flex-row gap-2">
-              <LogIn size={20} />
               User Profile
             </label>
           </div>
@@ -254,8 +262,7 @@ function OnboardingFirstPage() {
 
 interface SkillsController {
   skills: string[];
-  currentSkill: string;
-  setCurrentSkill: React.Dispatch<React.SetStateAction<string>>;
+  skillsInputRef: React.RefObject<HTMLInputElement | null>;
   addSkill: () => void;
   removeSkill: (skill: string) => void;
 }
@@ -265,6 +272,19 @@ interface OnboardingSecondPageProps {
 }
 
 function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
+  // Skill Input
+  const skillInputRef = skills.skillsInputRef;
+
+  function clearSkill() {
+    if (skillInputRef.current) {
+      skillInputRef.current.value = "";
+    }
+  }
+
+  function focusSkill() {
+    skillInputRef.current?.focus();
+  }
+
   return (
     <>
       <label className="text-xs font-semibold text-gray-700 uppercase flex items-center gap-1">
@@ -275,7 +295,7 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
           <UserPlus size={20} />
           <span>Talent Profile Details</span>
         </h1>
-        <p className="w-2xl text-justify text-xs text-slate-500 italic tracking-wide flex items-center gap-1.5 mb-4">
+        <p className="w-full wrap-break-word text-xs text-slate-500 italic tracking-wide leading-relaxed mb-4">
           Complete the talent-specific information below. These details will be
           used for profile visibility, rate matching, and client matching across
           the platform.
@@ -283,7 +303,6 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
         <form className="w-full min-h-16 grid grid-cols-3 gap-2 space-y-2">
           <div className="w-full h-fit flex flex-col col-span-3 justify-center items-left">
             <label className="text-md font-semibold text-gray-700 uppercase items-center mt-3 flex flex-row gap-2">
-              <UserPlus size={20} />
               Talent Information
             </label>
           </div>
@@ -346,30 +365,35 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             <div className="w-full flex items-center gap-1">
               <input
                 name="skills"
+                ref={skillInputRef}
                 className="flex-1 border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
                 placeholder="Enter the skills of the talent..."
-                onChange={(e) => skills.setCurrentSkill(e.target.value)}
                 required
               />
 
               <button
                 type="button"
                 className="border border-slate-300 rounded-lg p-1 cursor-pointer hover:bg-slate-100"
-                onClick={skills.addSkill}
+                onClick={() => {
+                  skills.addSkill();
+                  clearSkill();
+                  focusSkill();
+                }}
               >
                 <Plus size={24} />
               </button>
             </div>
-            <div className="w-full min-h-12 mt-2 overflow-y-scroll flex flex-wrap gap-2">
+            <div className="w-full min-h-16 mt-2 overflow-y-scroll flex flex-wrap gap-2">
               {skills.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="w-fit h-fit rounded-xl py-0.5 px-2 bg-slate-600 text-white text-sm flex flex-row gap-1"
+                  className="w-fit h-fit rounded-xl py-0.5 px-2 bg-slate-600 text-white text-xs font-semibold flex flex-row gap-1 uppercase"
                 >
                   {skill}
                   <button
                     type="button"
                     onClick={() => skills.removeSkill(skill)}
+                    className="cursor-pointer"
                   >
                     ×
                   </button>
@@ -434,26 +458,86 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
   );
 }
 
+// OnboardingPageClient: contains the dynamic client-side UI for the onboarding page to separate server operations
+// with the client operations such as useRef, useState, data mutation, etc
 export function OnboardingPageClient() {
-  // Pagination
-  const [formPage, setFormPage] = useState<number>(1);
+  // Utils
+  useFlashToast();
 
-  // Skills
-  const [currentSkill, setCurrentSkill] = useState("");
-  const [skills, setSkills] = useState<string[]>([]);
+  // onboarding: anything related to the top level of the form scope goes here
+  // including (obvoiusly) payload + submission handler
+  const [onboardingForm, setOnboardingForm] = useState<OnboardingPayload>({
+    emailAddress: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    suffix: "",
+    username: "",
+    phone: "",
+    birthday: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    province: "",
+    country: "Philippines",
+    bio: "",
+    headline: "",
+    primaryRole: "",
+    hourlyRate: 0,
+    currency: "USD",
+    skills: [],
+    yearsExperience: 0,
+    availability: "",
+    talentBio: "",
+    timezone: "Asia/Manila",
+  });
 
+  const handleOnboardingSubmission = (payload: OnboardingPayload) => {
+    storeTalent(payload);
+  };
+
+  // onboarding/skills: anything relevant to the skills section of the onboarding
+  // form
+  const skillInputRef = useRef<HTMLInputElement>(null);
+
+  // onboarding/skills/addSkill: add a skill to the talent onboarding form
+  // has validation to check for duplicates as of 5-9-2026
   function addSkill() {
-    const trimmed = currentSkill.trim();
+    const value = skillInputRef.current?.value.trim();
+    // validation
+    if (!value) {
+      showErrorToast("Please enter a non-empty input to parse a skill!");
+      return;
+    }
 
-    if (!trimmed) return;
+    if (onboardingForm.skills.includes(value.toLowerCase())) {
+      showErrorToast(
+        "The skill you have tried to add is already existing in the form. Try another skill!",
+      );
+      return;
+    }
 
-    setSkills((prev) => [...prev, trimmed]);
-    setCurrentSkill("");
+    // main logic
+    setOnboardingForm((prev) => ({
+      ...prev,
+      skills: [...prev.skills, value.toLowerCase()],
+    }));
+    if (skillInputRef.current) skillInputRef.current.value = "";
   }
 
+  // onboarding/skills/removeSkill: remove a skill to the current talent skill pool
+  // within the onboarding form
   function removeSkill(skillToRemove: string) {
-    setSkills((prev) => prev.filter((skill) => skill !== skillToRemove));
+    setOnboardingForm((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((s) => s !== skillToRemove),
+    }));
   }
+
+  // onboarding/pagination: for the navigation between the pages of the form
+  const [formPage, setFormPage] = useState<number>(1);
 
   return (
     <div className="h-fit bg-slate-100 px-4 pt-4 space-y-3 pb-12">
@@ -475,9 +559,8 @@ export function OnboardingPageClient() {
           {formPage == 2 && (
             <OnboardingSecondPage
               skills={{
-                skills,
-                currentSkill,
-                setCurrentSkill,
+                skills: onboardingForm.skills,
+                skillsInputRef: skillInputRef,
                 addSkill,
                 removeSkill,
               }}
@@ -488,73 +571,73 @@ export function OnboardingPageClient() {
           <label className="text-xs font-semibold text-gray-700 uppercase flex items-center gap-1">
             FORM NAVIGATION
           </label>
-          <div className="flex-1 flex-col border border-slate-300 bg-white rounded-lg p-6 flex items-start justify-left text-gray-400 space-y-4">
-            {/* Page Indicator */}
-            <div className="w-full flex flex-col gap-2">
-              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                Progress
-              </span>
-              <div className="w-full bg-slate-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all"
-                  style={{ width: `${(formPage / 2) * 100}%` }}
-                ></div>
-              </div>
-              <span className="text-xs text-slate-500 text-center">
-                Page {formPage} of 2
-              </span>
-            </div>
-            {/* Navigation Buttons */}
-            <div className="w-full flex flex-col gap-2">
-              {formPage > 1 && (
-                <button
-                  onClick={() => setFormPage(formPage - 1)}
-                  className="w-full px-4 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg text-sm font-semibold uppercase transition"
-                >
-                  ← Previous
-                </button>
-              )}
-              {formPage < 2 && (
-                <button
-                  onClick={() => setFormPage(formPage + 1)}
-                  className="w-full px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-sm font-semibold uppercase transition"
-                >
-                  Next →
-                </button>
-              )}
-              {formPage === 2 && (
-                <button className="w-full px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg text-sm font-semibold uppercase transition">
-                  Submit Onboarding
-                </button>
-              )}
-            </div>
+          <div className="flex-1 flex-col flex items-start justify-left text-gray-400 space-y-2 border border-slate-300 bg-white p-2 rounded-lg">
             {/* Form Steps */}
-            <div className="w-full flex flex-col gap-2 border-t border-slate-300 pt-4">
-              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                Steps
-              </span>
+            <div className="w-full flex gap-1">
               <button
                 onClick={() => setFormPage(1)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold uppercase transition ${
+                className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold  cursor-pointer transition ${
                   formPage === 1
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-[#3B4FBF]/10 text-[#2F3FA0]"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
+                title="User Authentication & Profile"
               >
-                1. User Authentication & Profile
+                <User size={20} />
               </button>
               <button
                 onClick={() => setFormPage(2)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold uppercase transition ${
+                className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold  cursor-pointer transition ${
                   formPage === 2
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-[#3B4FBF]/10 text-[#2F3FA0]"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
+                title="Talent Information"
               >
-                2. Talent Information
+                <Briefcase size={20} />
               </button>
             </div>
+            {/* Navigation Buttons */}
+            <div className="w-full flex flex-row gap-2 rounded-lg transition select-none">
+              {formPage < 2 && (
+                <div className="flex flex-row text-xs font-semibold gap-2 w-full">
+                  <button
+                    onClick={() => setFormPage(formPage + 1)}
+                    className="flex-1 px-3 py-2 rounded-lg bg-[#3B4FBF]/10 text-[#2F3FA0] hover:bg-[#3B4FBF]/20 transition uppercase"
+                  >
+                    Next →
+                  </button>
+                  <button
+                    className="flex-1 px-3 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed transition uppercase"
+                    disabled
+                  >
+                    Submit Onboarding
+                  </button>
+                </div>
+              )}
+              {formPage > 1 && (
+                <div className="flex flex-row text-xs font-semibold gap-2 w-full">
+                  <button
+                    onClick={() => setFormPage(formPage - 1)}
+                    className="flex-1 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition uppercase"
+                  >
+                    ← Previous
+                  </button>
+                  <button
+                    className="flex-1 px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition uppercase"
+                    onClick={(e) => {
+                      handleOnboardingSubmission(onboardingForm);
+                    }}
+                  >
+                    Submit Onboarding
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+          <label className="text-xs font-semibold text-gray-700 uppercase flex items-center gap-1 mt-4">
+            FORM PROGRESS
+          </label>
         </div>
       </div>
     </div>
