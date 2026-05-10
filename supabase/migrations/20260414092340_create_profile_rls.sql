@@ -34,7 +34,7 @@ with check (id = auth.uid() and role = 'guest'::user_role);
 
 create policy "create: all profiles as admin/superadmin"
 on profiles for insert 
-with check (get_my_role() in ('admin', 'superadmin'))
+with check (get_my_role() in ('admin', 'superadmin'));
 
 -- UPDATE: everyone updates their own (with role preservation); admin updates any.
 create policy "update: own profile"
