@@ -1,6 +1,11 @@
 "use client";
 
-import { queueFlashToast, showErrorToast, useFlashToast } from "@/utils/toast";
+import {
+  queueFlashToast,
+  showErrorToast,
+  showSuccessToast,
+  useFlashToast,
+} from "@/utils/toast";
 import {
   ArrowLeft,
   LogIn,
@@ -36,8 +41,16 @@ const NAME_SUFFIX_OPTIONS = [
   "Esq.",
 ];
 
+interface OnboardingFirstPageProps {
+  handleInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => void;
+}
+
 // Onboarding first page
-function OnboardingFirstPage() {
+function OnboardingFirstPage({ handleInputChange }: OnboardingFirstPageProps) {
   return (
     <>
       <label className="text-xs font-semibold text-gray-700 uppercase flex items-center gap-1">
@@ -48,7 +61,7 @@ function OnboardingFirstPage() {
           <UserPlus size={20} />
           <span>Talent Onboarding</span>
         </h1>
-        <p className="w-full break-words text-xs text-slate-500 italic tracking-wide leading-relaxed mb-4">
+        <p className="w-full wrap-break-word text-xs text-slate-500 italic tracking-wide leading-relaxed mb-4">
           To onboard the talent successfully, please filled out the form below.
           All fields are not required with only the inputs with the red asterisk
           are necessary for a successful onboarding. Additional details can be
@@ -62,34 +75,40 @@ function OnboardingFirstPage() {
           </div>
           <div className="w-full h-fit flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">
-              Email Address
+              Email Address <span className="text-red-500">*</span>
             </label>
             <input
               name="emailAddress"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="talent@example.com"
+              defaultValue="demo@talent.com"
             />
           </div>
           <div className="w-full h-fit flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
               name="password"
               type="password"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="••••••••"
+              defaultValue="Demo@12345"
             />
           </div>
           <div className="w-full h-fit flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">
-              Confirm Password
+              Confirm Password <span className="text-red-500">*</span>
             </label>
             <input
               name="confirmPassword"
               type="password"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="••••••••"
+              defaultValue="Demo@12345"
             />
           </div>
           <div className="w-full h-fit flex flex-col col-span-3 justify-center items-left">
@@ -104,8 +123,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="firstName"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="John"
+              defaultValue="Alex"
               required
             />
           </div>
@@ -116,8 +137,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="middleName"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Michael"
+              defaultValue="James"
             />
           </div>
           {/* Last Name */}
@@ -127,8 +150,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="lastName"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Doe"
+              defaultValue="Rivera"
               required
             />
           </div>
@@ -137,8 +162,13 @@ function OnboardingFirstPage() {
             <label className="text-sm font-medium text-gray-700 mb-1">
               Suffix
             </label>
-            <select className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]">
-              <option value="">Select suffix...</option>
+            <select
+              name="suffix"
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
+              defaultValue="Jr."
+            >
+              <option value="">None</option>
               {NAME_SUFFIX_OPTIONS.map((suffix) => (
                 <option key={suffix} value={suffix}>
                   {suffix}
@@ -154,8 +184,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="username"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="johndoe_dev"
+              defaultValue="alex_rivera"
               required
             />
           </div>
@@ -166,8 +198,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="phone"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="+1 (555) 000-0000"
+              defaultValue="+63 (555) 123-4567"
               required
             />
           </div>
@@ -179,7 +213,9 @@ function OnboardingFirstPage() {
             <input
               name="birthday"
               type="date"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
+              defaultValue="1990-05-15"
             />
           </div>
           {/* Address Line 1 */}
@@ -189,8 +225,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="addressLine1"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="123 Main Street"
+              defaultValue="123 Innovation Drive"
               required
             />
           </div>
@@ -201,8 +239,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="addressLine2"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Apt 4B (optional)"
+              defaultValue="Suite 200"
             />
           </div>
           {/* City */}
@@ -212,8 +252,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="city"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Manila"
+              defaultValue="Manila"
               required
             />
           </div>
@@ -224,8 +266,10 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="province"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="NCR"
+              defaultValue="NCR"
               required
             />
           </div>
@@ -236,6 +280,7 @@ function OnboardingFirstPage() {
             </label>
             <input
               name="country"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Philippines"
               defaultValue="Philippines"
@@ -249,9 +294,11 @@ function OnboardingFirstPage() {
             </label>
             <textarea
               name="bio"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 resize-none transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               rows={3}
               placeholder="Tell us about yourself..."
+              defaultValue="Full-stack developer with a passion for building scalable solutions and mentoring junior developers."
             />
           </div>
         </form>
@@ -269,9 +316,17 @@ interface SkillsController {
 
 interface OnboardingSecondPageProps {
   skills: SkillsController;
+  handleInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => void;
 }
 
-function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
+function OnboardingSecondPage({
+  skills,
+  handleInputChange,
+}: OnboardingSecondPageProps) {
   // Skill Input
   const skillInputRef = skills.skillsInputRef;
 
@@ -313,8 +368,10 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             </label>
             <input
               name="headline"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Enter the headline here..."
+              defaultValue="Senior Full Stack Developer | React & Node.js Specialist"
               required
             />
           </div>
@@ -325,8 +382,10 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             </label>
             <input
               name="primaryRole"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Enter the talent's primary role here..."
+              defaultValue="Full Stack Developer"
               required
             />
           </div>
@@ -339,8 +398,10 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
               name="hourlyRate"
               type="number"
               step="0.01"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Enter the talent's hourly rate here..."
+              defaultValue="50"
               required
             />
           </div>
@@ -351,6 +412,7 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             </label>
             <input
               name="currency"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Enter the currency here (USD is default)..."
               defaultValue="USD"
@@ -410,9 +472,10 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
               name="yearsExperience"
               type="number"
               min="0"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Enter a number for the talent's YoE..."
-              defaultValue={0}
+              defaultValue="8"
             />
           </div>
           {/* Availability */}
@@ -422,8 +485,10 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             </label>
             <input
               name="availability"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="Enter the talent's availability..."
+              defaultValue="Full-time"
               required
             />
           </div>
@@ -435,9 +500,11 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             </label>
             <textarea
               name="talentBio"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 resize-none transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               rows={4}
               placeholder="Tell us about your experience, skills, and what makes you unique..."
+              defaultValue="I'm a senior full stack developer with 8+ years of experience in building web applications. Specialized in React, Node.js, and TypeScript. I have a strong track record of delivering high-quality code and working effectively in team environments."
             />
           </div>
           {/* Timezone */}
@@ -447,6 +514,7 @@ function OnboardingSecondPage({ skills }: OnboardingSecondPageProps) {
             </label>
             <input
               name="timezone"
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg bg-white text-slate-800 text-sm px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-[#3B4FBF]"
               placeholder="e.g. Asia/Manila (default)"
               defaultValue="Asia/Manila"
@@ -467,35 +535,68 @@ export function OnboardingPageClient() {
   // onboarding: anything related to the top level of the form scope goes here
   // including (obvoiusly) payload + submission handler
   const [onboardingForm, setOnboardingForm] = useState<OnboardingPayload>({
-    emailAddress: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    suffix: "",
-    username: "",
-    phone: "",
-    birthday: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    province: "",
+    emailAddress: "demo@talent.com",
+    password: "Demo@12345",
+    confirmPassword: "Demo@12345",
+    firstName: "Alex",
+    middleName: "James",
+    lastName: "Rivera",
+    suffix: "Jr.",
+    username: "alex_rivera",
+    phone: "+63 (555) 123-4567",
+    birthday: "1990-05-15",
+    addressLine1: "123 Innovation Drive",
+    addressLine2: "Suite 200",
+    city: "Manila",
+    province: "NCR",
     country: "Philippines",
-    bio: "",
-    headline: "",
-    primaryRole: "",
-    hourlyRate: 0,
+    bio: "Full-stack developer with a passion for building scalable solutions and mentoring junior developers.",
+    headline: "Senior Full Stack Developer | React & Node.js Specialist",
+    primaryRole: "Full Stack Developer",
+    hourlyRate: 50,
     currency: "USD",
-    skills: [],
-    yearsExperience: 0,
-    availability: "",
-    talentBio: "",
+    skills: ["react", "node.js", "typescript"],
+    yearsExperience: 8,
+    availability: "Full-time",
+    talentBio:
+      "I'm a senior full stack developer with 8+ years of experience in building web applications. Specialized in React, Node.js, and TypeScript. I have a strong track record of delivering high-quality code and working effectively in team environments.",
     timezone: "Asia/Manila",
   });
 
-  const handleOnboardingSubmission = (payload: OnboardingPayload) => {
-    storeTalent(payload);
+  const handleOnboardingSubmission = async (payload: OnboardingPayload) => {
+    // Validate required fields before submission
+    if (payload.skills.length === 0) {
+      showErrorToast("Skills Required", "Please add at least one skill.");
+      return;
+    }
+
+    if (payload.password !== payload.confirmPassword) {
+      showErrorToast(
+        "Password Mismatch",
+        "Password and confirm password do not match.",
+      );
+      return;
+    }
+
+    try {
+      await storeTalent(payload);
+      showSuccessToast(
+        "Onboarding Complete",
+        "Talent has been successfully onboarded.",
+      );
+      queueFlashToast({
+        type: "success",
+        title: "Talent Onboarded",
+        description: "The talent has been added to your roster.",
+      });
+      // Navigate to talents page after successful submission
+      window.location.href = "/polaris/dash/talents";
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      showErrorToast("Onboarding Failed", errorMessage);
+      console.error("Onboarding error:", error);
+    }
   };
 
   // onboarding/skills: anything relevant to the skills section of the onboarding
@@ -539,6 +640,48 @@ export function OnboardingPageClient() {
   // onboarding/pagination: for the navigation between the pages of the form
   const [formPage, setFormPage] = useState<number>(1);
 
+  // onboarding/progress: determine percentage based on non-empty required fields
+  const requiredFields: (keyof OnboardingPayload)[] = [
+    "emailAddress",
+    "password",
+    "firstName",
+    "lastName",
+    "username",
+    "phone",
+    "addressLine1",
+    "city",
+    "province",
+    "country",
+    "headline",
+    "primaryRole",
+    "hourlyRate",
+    "availability",
+  ];
+
+  const completedFields = requiredFields.filter((field) => {
+    const value = onboardingForm[field];
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "number") return value > 0;
+    return value !== "" && value !== undefined && value !== null;
+  });
+
+  const progressPercentage = Math.round(
+    (completedFields.length / requiredFields.length) * 100,
+  );
+
+  // onboarding/progress/handleChange: generic handler to sync inputs to state
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setOnboardingForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="h-fit bg-slate-100 px-4 pt-4 space-y-3 pb-12">
       <div className="w-full flex flex-row justify-between mb-2">
@@ -555,7 +698,9 @@ export function OnboardingPageClient() {
       </div>
       <div className="w-full min-h-full grid grid-cols-12 space-x-2">
         <div className="col-span-8 flex flex-col">
-          {formPage == 1 && <OnboardingFirstPage />}
+          {formPage == 1 && (
+            <OnboardingFirstPage handleInputChange={handleInputChange} />
+          )}
           {formPage == 2 && (
             <OnboardingSecondPage
               skills={{
@@ -564,6 +709,7 @@ export function OnboardingPageClient() {
                 addSkill,
                 removeSkill,
               }}
+              handleInputChange={handleInputChange}
             />
           )}
         </div>
@@ -624,10 +770,12 @@ export function OnboardingPageClient() {
                     ← Previous
                   </button>
                   <button
-                    className="flex-1 px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition uppercase"
+                    className="flex-1 px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition uppercase disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(e) => {
+                      e.preventDefault();
                       handleOnboardingSubmission(onboardingForm);
                     }}
+                    disabled={onboardingForm.skills.length === 0}
                   >
                     Submit Onboarding
                   </button>
@@ -638,6 +786,39 @@ export function OnboardingPageClient() {
           <label className="text-xs font-semibold text-gray-700 uppercase flex items-center gap-1 mt-4">
             FORM PROGRESS
           </label>
+          {/* onboarding/progress/card: visual representation of form completion */}
+          <div className="flex-1 flex-col border border-slate-300 bg-white p-4 rounded-lg space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-slate-700 uppercase">
+                Completion Status
+              </span>
+              <span
+                className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                  progressPercentage === 100
+                    ? "bg-green-100 text-green-700"
+                    : "bg-slate-100 text-slate-600"
+                }`}
+              >
+                {progressPercentage}%
+              </span>
+            </div>
+
+            {/* onboarding/progress/progressBar: matching the Polaris dash aesthetic */}
+            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+              <div
+                className="h-full bg-[#3B4FBF] transition-all duration-500 ease-out"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-1.5">
+              <p className="text-[10px] text-slate-500 italic leading-tight">
+                {progressPercentage < 100
+                  ? `Missing ${requiredFields.length - completedFields.length} mandatory fields to proceed.`
+                  : "All mandatory fields filled. Ready for submission!"}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

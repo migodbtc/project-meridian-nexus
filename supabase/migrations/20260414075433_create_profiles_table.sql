@@ -42,7 +42,7 @@ create table profiles (
     --
     -- Personal information (Optional)
     --
-    phone text check (phone ~ '^\+?[0-9]{7,15}$'),
+    phone text,
     birthday date,
     address_line1 text check (char_length(address_line1) <= 100),
     address_line2 text check (char_length(address_line2) <= 100),

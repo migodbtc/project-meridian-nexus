@@ -9,6 +9,7 @@ import {
   isValidEmailFormat,
   passesPasswordRule,
 } from "@/utils/validation/auth";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 // OnboardingPayload: interface made in order to define all necessary components of the payload
 // regarding onboarding of talents to be used by the server actions.
@@ -88,7 +89,7 @@ export async function storeTalent(payload: OnboardingPayload) {
   }
 
   // storeTalent/supabase/connect: initialize server-side client
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // storeTalent/supabase/availability: check for existing unique identifiers
   const { data: existingUser } = await supabase
@@ -102,10 +103,11 @@ export async function storeTalent(payload: OnboardingPayload) {
   }
 
   // storeTalent/supabase/auth: create user in auth.users
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: payload.emailAddress,
-    password: payload.password,
-  });
+  const { data: authData, error: authError } =
+    await supabase.auth.admin.createUser({
+      email: payload.emailAddress,
+      password: payload.password,
+    });
 
   if (authError || !authData.user)
     throw new Error(`Auth: ${authError?.message}`);

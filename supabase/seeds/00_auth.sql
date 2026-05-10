@@ -1,7 +1,7 @@
 /**
  * SEED FILE    00_auth.sql
  * TABLE        auth.users
- * ROWS         12
+ * ROWS         13
  *
  * Covers all user_role values used by the system.
  * Inserting here fires handle_new_user(), which auto-creates bare profile rows.
@@ -9,7 +9,7 @@
  *
  * Password for all seed accounts: Password123!
  *
- * UUID map (a0…001 → a0…00c):
+ * UUID map (a0…001 → a0…00d):
  *   001–002  superadmin
  *   003–004  admin
  *   005–007  talent
@@ -17,6 +17,7 @@
  *   00a      operations
  *   00b      finance
  *   00c      guest (unconfirmed)
+ *   00d      admin
  */
 
 insert into auth.users (
@@ -102,6 +103,12 @@ insert into auth.users (
 ('00000000-0000-0000-0000-000000000000','a0000000-0000-0000-0000-00000000000c','authenticated','authenticated',
  'newuser@example.com', '$2a$10$PznXR5VSG0kHGXvUqGBJcuDCi3DmBRiIl.DV4J5JlOD0SjJZImYHu',
  null,'{"provider":"email","providers":["email"]}','{}',
- now() - interval '2 days', now() - interval '2 days')
+ now() - interval '2 days', now() - interval '2 days'),
+
+-- [013] admin — legit admin account
+('00000000-0000-0000-0000-000000000000','a0000000-0000-0000-0000-00000000000d','authenticated','authenticated',
+ 'migueljustin.bunda@gmail.com', '$2a$10$PznXR5VSG0kHGXvUqGBJcuDCi3DmBRiIl.DV4J5JlOD0SjJZImYHu',
+ now() - interval '1 days','{"provider":"email","providers":["email"]}','{}',
+ now() - interval '1 days', now() - interval '1 days')
 
 on conflict (id) do nothing;

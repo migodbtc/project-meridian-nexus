@@ -1,7 +1,7 @@
 /**
  * SEED FILE    01_profiles.sql
  * TABLE        public.profiles
- * ROWS         12
+ * ROWS         13
  *
  * handle_new_user() fires on 00_auth.sql and inserts bare rows (id only).
  * This seed upserts those rows to fill in names, roles, and optional fields.
@@ -101,7 +101,14 @@ insert into public.profiles (
  null,null,null,null,
  null,null,null,
  null,null,null,null,'Philippines',
- null)
+ null),
+
+-- [013] admin — legit admin account
+('a0000000-0000-0000-0000-00000000000d','admin',
+ 'Miguel',null,'Admin',null,
+ 'miguel_admin',null,null,
+ null,null,null,null,'Philippines',
+ 'Legit admin account')
 
 on conflict (id) do update set
     role         = excluded.role,
